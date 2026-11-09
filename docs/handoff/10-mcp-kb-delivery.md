@@ -1,12 +1,12 @@
 # MCP-KB 完整文本 collection 接入规程
 
-状态：待执行。2026-11-10 只读核对了目标组件 README、kbctl.py 参数定义和服务工具入口；未修改消费者、未执行安装或线上调用。源码基点与本机位置在忽略目录维护。执行时重新核对实际版本与目标约定。
+状态：MCP-KB 接入和验收规程。已实现的编排入口见[运行指南](../dev/running.md)与[运维指南](../dev/operations.md)，实际全量和生产验收见 [STATUS](../../STATUS.md)。组件源码身份与目标映射在忽略目录维护，每次部署核对实际版本与目标约定。
 
 ## 交付契约
 
-SCDP 生成稳定 collection，建议 ID 为 `games/shinycolors/story-bilingual`，E0 固化后保持稳定。collection.yaml、docs/、references/ 与导入清单采用 MCP-KB 当前契约。原始附件不进入正文检索分母，正文和分支不能按长度、缺译或未知角色筛掉。
+SCDP 的稳定 collection ID 为 `games/shinycolors/story-bilingual`。collection.yaml、docs/、references/ 与导入清单采用 MCP-KB 当前契约。原始附件不进入正文检索分母，正文和分支不能按长度、缺译或未知角色筛掉。
 
-建议按稳定 scriptId 生成文档身份，可按类别组织路径。若分支使单篇过长，可分文档并生成显式目录与跳转，必须保持帧到文档映射可逆。不要套用其他游戏的裁剪阈值或 idolum 的经历政策。
+按稳定 scriptId 生成文档身份，并按类别组织路径。若分支使单篇过长，可分文档并生成显式目录与跳转，必须保持帧到文档映射可逆。不要套用其他游戏的裁剪阈值或 idolum 的经历政策。
 
 源 collection 是事实文档，SQLite 索引可重建。SCDP 不向运行数据库直接写业务数据，不通过只读 MCP 服务进行导入；安装与索引使用运维 CLI。
 

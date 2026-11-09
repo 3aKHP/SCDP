@@ -1,6 +1,6 @@
 # 数据契约建议
 
-状态：候选字段与语义，接手阶段应形成正式 schema、纯合成示例和版本兼容策略。
+状态：契约语义设计。正式字段、schema 与合成示例以[契约 v1](../../schemas/README.md)为准。
 
 ## 共同约定
 
@@ -16,7 +16,7 @@
 |---|---|
 | schemaVersion | 外部数据契约版本 |
 | snapshotId | 不可变快照身份 |
-| releaseSequence / publicationRevision | 消费排序与同一来源修订身份，算法待固化 |
+| releaseSequence / publicationRevision | 消费排序与同一来源修订身份，正式规则见 ADR-0002 |
 | observedAt / builtAt | UTC 时间，区分观察与构建 |
 | source | 主清单版本、摘要、分片身份和资源目录指纹 |
 | inputs | 翻译 SHA、元数据身份、解析与对齐规则版本 |

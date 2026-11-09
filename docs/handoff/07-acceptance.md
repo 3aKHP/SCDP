@@ -1,6 +1,6 @@
 # 一期验收矩阵与证据
 
-状态：验收要求待执行，表中没有已通过声明。详细数据语义见[设计](../design/README.md)，任务执行入口见[工程任务](05-engineering-work.md)与[数据任务](06-data-work.md)。
+状态：本页定义验收要求，逐项执行结果见 [STATUS](../../STATUS.md)。详细数据语义见[设计](../design/README.md)，任务执行入口见[工程任务](05-engineering-work.md)与[数据任务](06-data-work.md)。
 
 ## 必需门禁
 

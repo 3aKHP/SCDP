@@ -12,7 +12,7 @@ SCDP 提供原始资产、结构化剧情、对齐译文、实体关系、资源
 
 MCP-KB 服务只读，source collection 为事实文档，SQLite 索引可重建。目标源码与部署位置由本地工作区映射管理。一期最终验收以完整闪彩文本 collection 在 MCP-KB 的实际安装、检索和全文读取为准，详见[验收矩阵](../handoff/07-acceptance.md)。
 
-建议生成稳定 collection-id games/shinycolors/story-bilingual，正式接入前核对目标环境。输出 docs/、references/、collection.yaml 与可追溯导入清单，原件引用或附件按索引政策排除。正文保留角色、旁白、选择、互斥路径与汇合位置。
+稳定 collection-id 为 games/shinycolors/story-bilingual，每次接入前核对目标环境。输出 docs/、references/、collection.yaml 与可追溯导入清单，原件引用或附件按索引政策排除。正文保留角色、旁白、选择、互斥路径与汇合位置。
 
 资料包依次执行 staging、validate-collection、pack-collection、安装、索引重建和 smoke-index。首个消费者实现遵守目标仓库当前发布协议；默认可见性与实际发布状态按对应配置记录。
 

@@ -62,8 +62,8 @@ uv run scdp publish dist/candidate.tar.gz --destination data/releases
 ```
 
 发布器校验包、写入不可变对象、读回摘要，再更新 latest.json；上一清单保留为 previous.json。
-这是文件存储后端。远程可下载服务、调度、正式消费者安装和实际 MCP 验收由后续上线任务完成。
-源包发布不代表消费者激活。现阶段不得将本地发布测试报告为 G10 通过。
+远程私有下载、定时更新和消费者切换见[运维指南](operations.md)。
+源包与消费者各自维护活动身份，正式上线须核对实际下载、完整消费和定时观察证据。
 
 ## 元数据与完整校验
 

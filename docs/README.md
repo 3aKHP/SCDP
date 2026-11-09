@@ -3,7 +3,7 @@
 | 文档簇 | 用途 | 入口 |
 |---|---|---|
 | research | 已观察事实、来源身份、指标口径和实验边界 | [研究入口](research/README.md) |
-| design | 建议架构与待固化契约，覆盖文本和未来多媒体 | [设计入口](design/README.md) |
+| design | 架构与契约语义约束，覆盖文本和未来多媒体 | [设计入口](design/README.md) |
 | handoff | 接手顺序、一期全流程任务、MCP-KB 验收、上线恢复和未决事项 | [交接入口](handoff/README.md) |
 | dev | 文档维护、术语使用和架构决策 | [开发协作规范](dev/README.md) |
 | glossary | 跨文档概念与详细规则入口 | [术语表](glossary.md) |
