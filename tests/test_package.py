@@ -91,3 +91,39 @@ def test_reading_line_endings_preserve_original_evidence():
     assert '\r' not in document
     assert story['frames'][0]['text']==frames[0]['text']
     assert check_occurrences(story,document)[0]==1
+
+
+def test_interrupted_publication_and_truncated_upload_keep_previous(tmp_path):
+    import subprocess
+    import sys
+    root=tmp_path/'work';fixture_work(root)
+    first=tmp_path/'first';second=tmp_path/'second'
+    build(root,first);build(root,second,revision=1)
+    old=tmp_path/'old.tar.gz';new=tmp_path/'new.tar.gz'
+    pack(first,old);pack(second,new)
+    destination=tmp_path/'releases'
+    previous=publish(old,destination)
+    script='''
+import os,sys
+from pathlib import Path
+from scdp.package import publish
+original=os.replace
+def interrupted(source,target):
+    if Path(target).name=='latest.json':os._exit(23)
+    original(source,target)
+os.replace=interrupted
+publish(sys.argv[1],sys.argv[2])
+'''
+    process=subprocess.run([sys.executable,'-c',script,str(new),str(destination)])
+    assert process.returncode==23
+    assert json.loads((destination/'latest.json').read_bytes())==previous
+    assert len(list(destination.glob('*.tar.gz')))==2
+    truncated=tmp_path/'truncated.tar.gz'
+    raw=new.read_bytes();truncated.write_bytes(raw[:len(raw)//2])
+    with pytest.raises((EOFError,tarfile.ReadError,OSError)):
+        publish(truncated,destination)
+    assert json.loads((destination/'latest.json').read_bytes())==previous
+    current=publish(new,destination)
+    assert current['snapshotId']!=previous['snapshotId']
+    assert json.loads((destination/'previous.json').read_bytes())==previous
+    assert publish(new,destination)==current
