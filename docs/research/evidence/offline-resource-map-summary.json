@@ -1,0 +1,137 @@
+{
+  "status": "offline snapshot analysis; no network requests",
+  "paths": 393759,
+  "groups": 170,
+  "numeric_templates": 5872,
+  "template_method": "Replace every decimal digit run with {digits}; no semantic identity claim.",
+  "top_level": {
+    "ae": 2527,
+    "images": 78929,
+    "json": 11000,
+    "movies": 3398,
+    "particles": 2213,
+    "sounds": 278406,
+    "spine": 17282,
+    "fonts": 4
+  },
+  "story_candidates": 10936,
+  "spine_directories": 5755,
+  "spine_without_standard_triple": 0,
+  "spine_note": "Directory co-occurrence only; atlas page names, MIME and dependencies unverified.",
+  "official_wire_samples": [
+    {
+      "path": "json/produce_events/201502201.json",
+      "wire_bytes": 3652,
+      "decoded_bytes": 22451
+    },
+    {
+      "path": "json/produce_events/109900601.json",
+      "wire_bytes": 815,
+      "decoded_bytes": 3558
+    },
+    {
+      "path": "json/game_event_communications/400109901.json",
+      "wire_bytes": 4568,
+      "decoded_bytes": 40992
+    }
+  ],
+  "local_text_size_probes": [
+    {
+      "file": "official-sample-json_game_event_communications_400109901.json",
+      "frames": 168,
+      "decoded_bytes": 40992,
+      "text_control_json_bytes": 8471,
+      "text_control_gzip_bytes": 2331
+    },
+    {
+      "file": "official-sample-json_produce_events_100100101.json",
+      "frames": 72,
+      "decoded_bytes": 18333,
+      "text_control_json_bytes": 7756,
+      "text_control_gzip_bytes": 2405
+    },
+    {
+      "file": "official-sample-json_produce_events_100100308.json",
+      "frames": 14,
+      "decoded_bytes": 2966,
+      "text_control_json_bytes": 730,
+      "text_control_gzip_bytes": 392
+    },
+    {
+      "file": "official-sample-json_produce_events_109900601.json",
+      "frames": 25,
+      "decoded_bytes": 3558,
+      "text_control_json_bytes": 1377,
+      "text_control_gzip_bytes": 554
+    },
+    {
+      "file": "official-sample-json_produce_events_180300102.json",
+      "frames": 67,
+      "decoded_bytes": 16420,
+      "text_control_json_bytes": 6294,
+      "text_control_gzip_bytes": 1965
+    },
+    {
+      "file": "official-sample-json_produce_events_201502201.json",
+      "frames": 118,
+      "decoded_bytes": 22451,
+      "text_control_json_bytes": 6674,
+      "text_control_gzip_bytes": 2286
+    }
+  ],
+  "translation_archive": {
+    "archive_bytes": 45852135,
+    "all_files_bytes": 71482329,
+    "story_csv_files": 5623,
+    "story_csv_bytes": 31857770
+  },
+  "size_limitations": "Convenience samples are not representative. Final bilingual package format, metadata, compression and total size remain unmeasured.",
+  "source": {
+    "file": "official-resource-inventory.json",
+    "bytes": 26556506,
+    "sha256": "f6784c017489370da9e2b98328d1849cc2e548cdc342a026620995b5851d745b"
+  },
+  "inputs": [
+    {
+      "file": "official-samples-summary.json",
+      "bytes": 2304,
+      "sha256": "72c972c0f6c0a197976c4c5323ef207bba2590e301dbdd04ed1f7a8ff707559a"
+    },
+    {
+      "file": "SCTranslationData-dce1646.tar.gz",
+      "bytes": 45852135,
+      "sha256": "bb5f6bb8bf1832fd64c68ccd1ff1646ccd2e9375fc20e1e7f641624512ab4ea5"
+    },
+    {
+      "file": "official-sample-json_game_event_communications_400109901.json",
+      "bytes": 40992,
+      "sha256": "d1fc63b0928b1ab3ed448faa8fe1e0e6edf493effd257062b2729b30af6a583d"
+    },
+    {
+      "file": "official-sample-json_produce_events_100100101.json",
+      "bytes": 18333,
+      "sha256": "753a57b2a6eecd0485ce67ef1eff19de65f546dee8b616196db9c801d910001b"
+    },
+    {
+      "file": "official-sample-json_produce_events_100100308.json",
+      "bytes": 2966,
+      "sha256": "45d652703f4d33c6c5a658f462b95e3596c60848317d5ed6c943409d1a2066ea"
+    },
+    {
+      "file": "official-sample-json_produce_events_109900601.json",
+      "bytes": 3558,
+      "sha256": "6029480143870394932c697907215d45a24b39421a8a29c9117b41201d1d63f0"
+    },
+    {
+      "file": "official-sample-json_produce_events_180300102.json",
+      "bytes": 16420,
+      "sha256": "6f9536fc73cb0f3113f13b20b8b52d5eaaf49ca67f9198c344177bdcb77316d8"
+    },
+    {
+      "file": "official-sample-json_produce_events_201502201.json",
+      "bytes": 22451,
+      "sha256": "cd5d15af190c6ca76713f9bb6436b8e76e95045bc0ce2609b40cecf52d6d3ad0"
+    }
+  ],
+  "method": "Read fixed inventory; group by first two path components; replace decimal digit runs; count Spine directory co-occurrence; inspect tar member sizes without extraction; gzip six local text/control projections. No network requests."
+}

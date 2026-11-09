@@ -1,0 +1,26 @@
+[
+  {
+    "path": "json/produce_events/100100101.json",
+    "frames": 72,
+    "body_frames": 57,
+    "select_frames": 0,
+    "choice_shape": [],
+    "labels": 1
+  },
+  {
+    "path": "json/produce_events/100100308.json",
+    "frames": 14,
+    "body_frames": 5,
+    "select_frames": 0,
+    "choice_shape": [],
+    "labels": 1
+  },
+  {
+    "path": "json/produce_events/109900601.json",
+    "frames": 25,
+    "body_frames": 11,
+    "select_frames": 0,
+    "choice_shape": [],
+    "labels": 1
+  }
+]

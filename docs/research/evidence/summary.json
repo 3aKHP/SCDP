@@ -1,0 +1,65 @@
+{
+  "checked_date": "2026-11-10 Asia/Shanghai",
+  "scope": "Shiny Colors enza; excludes Song for Prism and anime",
+  "SCTranslationData": {
+    "commit": "dce164640732863cfd15b9aa318b799669321687",
+    "last_commit_utc": "2026-11-08T07:19:44Z",
+    "last_commit_change": "4 lines added and 4 removed in an existing event translation",
+    "last_story_addition_utc": "2026-06-16T04:18:42Z",
+    "latest_numbered_scenario_event": {
+      "id": 86,
+      "title": "よっつのものがたり",
+      "release_date": "2025-05-30"
+    },
+    "2026_scenario_title_matches": {
+      "終わる魔法、積み重ねた昨日": 0,
+      "CoMETIK:In Focus": 0,
+      "Same or Not the same?": 0,
+      "sand song": 0,
+      "しんぐる！": 0,
+      "同じで違う屋根のした": 0,
+      "iの栖": 0,
+      "with open()": 0,
+      "いつか風が止むその日まで": 0,
+      "もしも、アンティーカじゃなかったら": 0,
+      "果てにふれるのなら": 0
+    },
+    "metrics_file": "sc-audit.json",
+    "translation_metric_scope": "Nonempty fourth column among collected body rows; excludes select/info/header/translator rows; before comm-story fallback. Not game-wide coverage or translation quality.",
+    "translation_warning": "95.78% is the nonempty translation-cell rate within collected text, before shared translation fallback; it is not game-wide plot completeness."
+  },
+  "ShinyColorsDB": {
+    "recent_metadata_max_release_date": "2026-10-31",
+    "latest_story_sample_release_date": "2026-10-30",
+    "sample_file": "mirror-sample.json",
+    "album1_last_modified": "2024-03-24T13:19:58Z",
+    "album1_latest_seasonal_section": "2024ホワイトデー スペシャルコミュ",
+    "limits": "Card story samples only; no full game catalog or all scripts audited.",
+    "album_comparison": {
+      "albums_read": 28,
+      "unique_scripts": 3655,
+      "present_in_csv": 2077,
+      "missing_from_csv": 1578,
+      "scope": "Numeric script IDs in the frozen 28-idol album catalog, matched against CSV info rows. Includes failure routes and seasonal communications; does not assert every mirror script is retrievable."
+    },
+    "album_headers_checked": 28,
+    "album_headers_date": "2024-03-24",
+    "latest_story_sample": {
+      "cards": 2,
+      "api_listed_scripts": 5,
+      "retrieved_scripts": 5,
+      "all_absent_from_csv": true
+    }
+  },
+  "eidolon-sc": {
+    "commit": "8cdb82b84670466041aed02640bb747f81ddca96",
+    "latest_commit_utc": "2026-11-08T12:24:41Z",
+    "mirror_sync_update_utc": "2026-10-27T10:25:07Z",
+    "raw_corpus_distributed": false,
+    "import_filters": [
+      "Drops producer select rows",
+      "Skips/removes configured failure endings",
+      "Skips a raw JSON script when a CSV version already exists"
+    ]
+  }
+}

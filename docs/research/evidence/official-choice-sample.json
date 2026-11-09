@@ -1,0 +1,42 @@
+{
+  "path": "json/produce_events/180300102.json",
+  "frames": 67,
+  "select_frames": 3,
+  "select_types": [
+    "str",
+    "str",
+    "str"
+  ],
+  "select_keys": [
+    [],
+    []
+  ],
+  "frame_key_counts": {
+    "textFrame": 64,
+    "bg": 3,
+    "bgm": 1,
+    "waitType": 7,
+    "waitTime": 7,
+    "id": 27,
+    "speaker": 52,
+    "text": 52,
+    "charAnim1": 32,
+    "charAnim2": 33,
+    "charLipAnim": 33,
+    "charLabel": 33,
+    "textCtrl": 53,
+    "charType": 1,
+    "charId": 1,
+    "charPosition": 2,
+    "charEffect": 3,
+    "voice": 27,
+    "bgEffect": 2,
+    "bgEffectTime": 2,
+    "se": 1,
+    "select": 3,
+    "nextLabel": 6,
+    "label": 4,
+    "charAnim4": 1,
+    "autoWaitTime": 1
+  }
+}

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling==1.29.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "scdp"
+version = "0.1.0"
+description = "Versioned Shiny Colors text and asset inventory pipeline"
+requires-python = ">=3.12"
+license = "AGPL-3.0-or-later"
+dependencies = ["httpx==0.28.1", "jsonschema==4.26.0"]
+
+[project.scripts]
+scdp = "scdp.cli:main"
+
+[dependency-groups]
+dev = ["pytest==9.0.2"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

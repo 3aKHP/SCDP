@@ -1,0 +1,280 @@
+{
+  "checked_at_utc": "2026-11-09T18:19:12.641123+00:00",
+  "scope": {
+    "first_phase": "Shiny Colors enza Japanese story scripts and related metadata; extension points for other asset kinds",
+    "excluded_from_measurement": "No full media download, no authenticated game API calls, no production deployment or remote repository creation"
+  },
+  "decision": "Proceed with an independent official-inventory-driven pipeline, using AKDP publication and archive patterns. Treat semantic metadata and translation as separate provenance-bearing inputs.",
+  "evidence": {
+    "official_manifest": {
+      "version": 453,
+      "anonymous_fetch": true,
+      "conditional_get_status": 304,
+      "cache_max_age_seconds": 60,
+      "stable_before_after": true,
+      "inventory_fingerprint_sha256": "1b1b24fb2c79570bfa15af63650fbead22e26affd306f0247bdc54935d4254a1"
+    },
+    "inventory": {
+      "chunks_expected": 132,
+      "chunks_saved": 132,
+      "unique_asset_paths": 393759,
+      "wire_bytes_this_run": 1554239,
+      "decoded_chunk_bytes": 24981599,
+      "manifest_declared_total_bytes": 38617604383,
+      "json_categories": {
+        "produce_communication_auditions": 124,
+        "produce_communication_cheers": 186,
+        "produce_communication_promise_results": 951,
+        "produce_communication_televisions": 186,
+        "produce_communications": 465,
+        "produce_communications_promises": 372,
+        "produce_events": 5475,
+        "support_skills": 64,
+        "game_event_communications": 795,
+        "produce_communication_judges": 9,
+        "special_communications": 2170,
+        "mypage_communications": 196,
+        "business_unit_communication": 7
+      },
+      "errors": []
+    },
+    "csv_comparison": {
+      "official_story_candidate_paths": 10936,
+      "csv_script_ids": 5612,
+      "overlap": 5612,
+      "official_not_in_csv": 5324,
+      "csv_not_in_current_official_map": 0,
+      "csv_not_in_map_examples": []
+    },
+    "official_sample_summary": [
+      {
+        "path": "json/produce_events/201502201.json",
+        "resource_version": 1,
+        "wire_bytes": 3652,
+        "decoded_bytes": 22451,
+        "sha256": "cd5d15af190c6ca76713f9bb6436b8e76e95045bc0ce2609b40cecf52d6d3ad0",
+        "root_type": "list",
+        "frames": 118,
+        "frame_keys": {
+          "textFrame": 118,
+          "bg": 18,
+          "bgm": 21,
+          "waitType": 62,
+          "waitTime": 62,
+          "se": 25,
+          "speaker": 50,
+          "text": 50,
+          "textCtrl": 50,
+          "autoWaitTime": 11,
+          "id": 16,
+          "voice": 16,
+          "bgEffect": 17,
+          "bgEffectTime": 17,
+          "charAnim1": 21,
+          "charAnim2": 24,
+          "charLipAnim": 27,
+          "charLabel": 27,
+          "charCategory": 1,
+          "charType": 1,
+          "charId": 1,
+          "charPosition": 5,
+          "charEffect": 10,
+          "bgmFadeTime": 6,
+          "label": 1
+        },
+        "equal_mirror_json": true
+      },
+      {
+        "path": "json/produce_events/109900601.json",
+        "resource_version": 1,
+        "wire_bytes": 815,
+        "decoded_bytes": 3558,
+        "sha256": "6029480143870394932c697907215d45a24b39421a8a29c9117b41201d1d63f0",
+        "root_type": "list",
+        "frames": 25,
+        "frame_keys": {
+          "textFrame": 25,
+          "bg": 5,
+          "bgm": 1,
+          "waitType": 13,
+          "waitTime": 13,
+          "se": 7,
+          "speaker": 11,
+          "text": 11,
+          "textCtrl": 11,
+          "bgEffect": 4,
+          "bgEffectTime": 4,
+          "label": 1
+        }
+      },
+      {
+        "path": "json/game_event_communications/400109901.json",
+        "resource_version": 1,
+        "wire_bytes": 4568,
+        "decoded_bytes": 40992,
+        "sha256": "d1fc63b0928b1ab3ed448faa8fe1e0e6edf493effd257062b2729b30af6a583d",
+        "root_type": "list",
+        "frames": 168,
+        "frame_keys": {
+          "textFrame": 168,
+          "bg": 25,
+          "bgm": 12,
+          "waitType": 48,
+          "waitTime": 48,
+          "bgEffect": 23,
+          "se": 21,
+          "bgEffectTime": 22,
+          "id": 74,
+          "speaker": 86,
+          "text": 86,
+          "textCtrl": 86,
+          "voice": 77,
+          "autoWaitTime": 21,
+          "charAnim1": 65,
+          "charAnim2": 69,
+          "charLipAnim": 58,
+          "charLabel": 72,
+          "charCategory": 4,
+          "charType": 4,
+          "charId": 4,
+          "charPosition": 26,
+          "charAnim4": 6,
+          "charEffect": 42,
+          "fg": 2,
+          "fgEffect": 1,
+          "charAnim3": 6,
+          "charAnim3Loop": 3,
+          "label": 1
+        }
+      }
+    ],
+    "failure_and_intro_samples": [
+      {
+        "path": "json/produce_events/100100101.json",
+        "frames": 72,
+        "body_frames": 57,
+        "select_frames": 0,
+        "choice_shape": [],
+        "labels": 1
+      },
+      {
+        "path": "json/produce_events/100100308.json",
+        "frames": 14,
+        "body_frames": 5,
+        "select_frames": 0,
+        "choice_shape": [],
+        "labels": 1
+      },
+      {
+        "path": "json/produce_events/109900601.json",
+        "frames": 25,
+        "body_frames": 11,
+        "select_frames": 0,
+        "choice_shape": [],
+        "labels": 1
+      }
+    ],
+    "choice_sample": {
+      "path": "json/produce_events/180300102.json",
+      "frames": 67,
+      "select_frames": 3,
+      "select_types": [
+        "str",
+        "str",
+        "str"
+      ],
+      "select_keys": [
+        [],
+        []
+      ],
+      "frame_key_counts": {
+        "textFrame": 64,
+        "bg": 3,
+        "bgm": 1,
+        "waitType": 7,
+        "waitTime": 7,
+        "id": 27,
+        "speaker": 52,
+        "text": 52,
+        "charAnim1": 32,
+        "charAnim2": 33,
+        "charLipAnim": 33,
+        "charLabel": 33,
+        "textCtrl": 53,
+        "charType": 1,
+        "charId": 1,
+        "charPosition": 2,
+        "charEffect": 3,
+        "voice": 27,
+        "bgEffect": 2,
+        "bgEffectTime": 2,
+        "se": 1,
+        "select": 3,
+        "nextLabel": 6,
+        "label": 4,
+        "charAnim4": 1,
+        "autoWaitTime": 1
+      }
+    }
+  },
+  "important_limits": [
+    "10936 counts resource paths selected by namespace, not confirmed unique readable story episodes.",
+    "Only sampled scripts were downloaded and parsed; full script retrieval and schema validation remain unperformed.",
+    "Client asset-map per-file values are version counters, not cryptographic content checksums.",
+    "The inventory contains paths and versions, not full official master-data titles, card/event associations or unlock conditions.",
+    "An asset manifest snapshot describes advertised current resources and cannot prove complete recoverability of every past resource.",
+    "ShinyColorsDB auxiliary metadata and SCTranslationData human translations remain separately versioned dependencies.",
+    "Authenticated official metadata export and its automation were not tested.",
+    "The sampled sixth-scenario shared intro does not prove coverage of every say Halo storyline."
+  ],
+  "recommended_pipeline": [
+    "poll official asset map with ETag",
+    "snapshot root and changed inventory chunks; fingerprint and check consistency",
+    "select story namespace and fetch changed raw bytes with bounded concurrency, retry and checkpoint",
+    "store immutable raw and decoded objects plus current/historical presence",
+    "parse frame order, choices, labels, jumps and failure paths without application-specific exclusions",
+    "enrich metadata with source and confidence; align translation without replacing Japanese source",
+    "validate counts, references, source preservation and download completeness",
+    "draft-first immutable data release with checksums and revisions",
+    "build KB collection as a downstream artifact; activate through KB release protocol"
+  ],
+  "freshness_target_proposal": {
+    "poll_interval_minutes": 10,
+    "worker": "Persistent lightweight scheduler for predictable polling; build can run in GitHub Actions",
+    "guarantee": "Near-real-time target measured from official availability; no hard latency guarantee established"
+  },
+  "bootstrap_estimate": {
+    "candidate_script_requests": 10936,
+    "request_spacing_only_hours_at_one_per_second": 3.04,
+    "note": "Arithmetic lower bound for the deliberate spacing policy only; total latency, transfer bytes, retries and full-run duration are not measured."
+  },
+  "future_asset_contract_fields": [
+    "logicalPath",
+    "assetKind",
+    "sourceVersion",
+    "wireSha256",
+    "decodedSha256",
+    "firstSeen",
+    "lastSeen",
+    "availability",
+    "dependencies",
+    "storageRef",
+    "sourceProvenance"
+  ],
+  "AKDP_reference": {
+    "local_head": "bcd442c",
+    "read_documents": [
+      "README.md",
+      "SOURCE_STRATEGY.md",
+      ".github/workflows/data-pipeline.yml"
+    ],
+    "reusable_patterns": [
+      "official-source freshness",
+      "baseline plus delta archive",
+      "source fingerprint and immutable revisions",
+      "validation before publish",
+      "draft-first release",
+      "last-known-good consumer activation"
+    ]
+  }
+}

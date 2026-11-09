@@ -1,0 +1,96 @@
+{
+  "checked_date": "2026-11-10",
+  "handoff_created_at_utc": "2026-11-09T18:32:38.903170+00:00",
+  "research_source": "shinycolors-source-audit-20261110",
+  "local_archive": "local_dev/sandbox/research-20261110",
+  "evidence_kind": "Snapshot metrics, file identifiers, headers and structure summaries; raw story bodies and media remain in the ignored local archive.",
+  "scope": "Shiny Colors enza; full resource inventory and sampled script retrieval.",
+  "source_commits": {
+    "SCTranslationData": "dce164640732863cfd15b9aa318b799669321687",
+    "eidolon-sc-reference": "8cdb82b84670466041aed02640bb747f81ddca96",
+    "idolum-local": "95087bb95af5bfb761cce42966e92f1667e5f1d2",
+    "akdp-local": "bcd442cd5e4214858e72bca3b6dcad0f255bd1fb"
+  },
+  "tracked_evidence": [
+    {
+      "file": "sc-audit.json",
+      "bytes": 11328,
+      "sha256": "304d49143f0da6e2b5e4c852d473ffceffd2c85f047b658f78c3e0495aa20bef",
+      "local_original": "local_dev/sandbox/research-20261110/sc-audit.json"
+    },
+    {
+      "file": "album-baseline-comparison.json",
+      "bytes": 4382,
+      "sha256": "db4d8699b67144dfea6e47082fb67235e784659b25a5ef93373c06784996edd1",
+      "local_original": "local_dev/sandbox/research-20261110/album-baseline-comparison.json"
+    },
+    {
+      "file": "official-inventory-summary.json",
+      "bytes": 5248,
+      "sha256": "175baabdaae03debada787974aac6c667f600cfa00645da6ae239f9f3dde2860",
+      "local_original": "local_dev/sandbox/research-20261110/official-inventory-summary.json"
+    },
+    {
+      "file": "official-samples-summary.json",
+      "bytes": 2304,
+      "sha256": "72c972c0f6c0a197976c4c5323ef207bba2590e301dbdd04ed1f7a8ff707559a",
+      "local_original": "local_dev/sandbox/research-20261110/official-samples-summary.json"
+    },
+    {
+      "file": "official-branch-samples.json",
+      "bytes": 494,
+      "sha256": "46b0e145c19aa216247bb4516e31d05f7b57295dae9ad27636cb813a10c954ac",
+      "local_original": "local_dev/sandbox/research-20261110/official-branch-samples.json"
+    },
+    {
+      "file": "official-choice-sample.json",
+      "bytes": 702,
+      "sha256": "a84a91d27f0126709a2d018ad1148d4dfaeddf6476befdad074d941e3c9f09c7",
+      "local_original": "local_dev/sandbox/research-20261110/official-choice-sample.json"
+    },
+    {
+      "file": "official-vs-csv.json",
+      "bytes": 195,
+      "sha256": "b7604c04a9522c3fa9af01af04e90f5209c909a46b8778f75afeee495a880c92",
+      "local_original": "local_dev/sandbox/research-20261110/official-vs-csv.json"
+    },
+    {
+      "file": "official-manifest-stability.json",
+      "bytes": 152,
+      "sha256": "85730eca2bbd46b8c89fb584c48f0238ac242d7dd60fb4a4fb3cdb4b91c3669f",
+      "local_original": "local_dev/sandbox/research-20261110/official-manifest-stability.json"
+    },
+    {
+      "file": "feasibility-assessment.json",
+      "bytes": 9224,
+      "sha256": "3086e9cfc9905a8e00cb50ff4b0267f8983c1fd9f8e413c11da11d9b3f905dff",
+      "local_original": "local_dev/sandbox/research-20261110/feasibility-assessment.json"
+    },
+    {
+      "file": "summary.json",
+      "bytes": 2788,
+      "sha256": "bcbd2470ef0c09d54b027b9f06c8bdebcf001423dd9823b44b6ede8c8d1aa34c",
+      "local_original": "local_dev/sandbox/research-20261110/summary.json"
+    },
+    {
+      "file": "official-asset-map.json",
+      "bytes": 4234,
+      "sha256": "c9e95ae0c34a38fd86392b8a678d8c29353cb88d0b128f7e17e5e16a3a2a46d6",
+      "local_original": "local_dev/sandbox/research-20261110/official-asset-map.json"
+    }
+  ],
+  "local_file_count": 361,
+  "local_bytes": 109399527,
+  "conditional_request_observation": {
+    "status": 304,
+    "cache_max_age_seconds": 60
+  },
+  "limitations": [
+    "No full candidate-script retrieval or media mirroring performed.",
+    "No authenticated game API export verified.",
+    "Metadata title and association completeness remains unverified.",
+    "Inventory counts describe the fixed observed snapshot."
+  ],
+  "archive_manifest": "local_dev/sandbox/research-20261110/archive-inventory.json",
+  "SCTranslationData_archive_sha256": "bb5f6bb8bf1832fd64c68ccd1ff1646ccd2e9375fc20e1e7f641624512ab4ea5"
+}

@@ -1,0 +1,30 @@
+# 本地研究、游戏资源、运行数据与构建目录
+local_dev/
+work/
+dist/
+data/
+corpus/
+assets/
+cache/
+logs/
+
+# 凭证与本机状态
+.env
+.env.*
+!.env.example
+*.token
+*.key
+*.pem
+*.crt
+.auth/
+.playwright/
+
+# 构建工具缓存
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+node_modules/
+target/
+.DS_Store

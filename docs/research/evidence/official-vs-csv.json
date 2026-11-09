@@ -1,0 +1,8 @@
+{
+  "official_story_candidate_paths": 10936,
+  "csv_script_ids": 5612,
+  "overlap": 5612,
+  "official_not_in_csv": 5324,
+  "csv_not_in_current_official_map": 0,
+  "csv_not_in_map_examples": []
+}

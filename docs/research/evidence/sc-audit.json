@@ -1,0 +1,405 @@
+{
+  "sha": "dce164640732863cfd15b9aa318b799669321687",
+  "totals": {
+    "body_rows": 249950,
+    "translated_rows": 239391,
+    "choice_rows": 4218,
+    "files": 5623,
+    "fully_translated_files": 3276,
+    "partially_translated_files": 2343,
+    "extra_column_rows": 1639,
+    "empty_body_files": 3,
+    "untranslated_files": 1,
+    "no_script_id_files": 1
+  },
+  "unique_script_ids": 5612,
+  "duplicate_script_groups": 10,
+  "duplicate_excess_files": 10,
+  "script_categories": {
+    "game_event_communications": 530,
+    "special_communications": 764,
+    "produce_events": 3668,
+    "produce_communications": 317,
+    "produce_communication_televisions": 31,
+    "produce_communication_cheers": 106,
+    "produce_communication_auditions": 79,
+    "produce_communication_promise_results": 33,
+    "produce_communications_promises": 27,
+    "mypage_communications": 55,
+    "business_unit_communication": 2
+  },
+  "dedup_longest_body_rows": 249530,
+  "dedup_longest_translated_rows": 238976,
+  "categories": {
+    "283活动剧情": {
+      "body_rows": 61402,
+      "translated_rows": 58901,
+      "choice_rows": 209,
+      "files": 771,
+      "fully_translated_files": 410,
+      "partially_translated_files": 358,
+      "extra_column_rows": 1436,
+      "empty_body_files": 3
+    },
+    "MEMちょ": {
+      "body_rows": 662,
+      "translated_rows": 646,
+      "files": 12,
+      "partially_translated_files": 7,
+      "choice_rows": 12,
+      "fully_translated_files": 5
+    },
+    "ルビー": {
+      "body_rows": 921,
+      "translated_rows": 896,
+      "files": 23,
+      "fully_translated_files": 15,
+      "choice_rows": 12,
+      "partially_translated_files": 8
+    },
+    "七草にちか": {
+      "body_rows": 7566,
+      "translated_rows": 7356,
+      "files": 228,
+      "fully_translated_files": 173,
+      "choice_rows": 181,
+      "partially_translated_files": 55,
+      "extra_column_rows": 2
+    },
+    "七草はづき": {
+      "body_rows": 198,
+      "translated_rows": 195,
+      "files": 5,
+      "fully_translated_files": 4,
+      "partially_translated_files": 1
+    },
+    "三峰結華": {
+      "body_rows": 6303,
+      "translated_rows": 6008,
+      "choice_rows": 132,
+      "files": 144,
+      "partially_translated_files": 76,
+      "fully_translated_files": 68,
+      "extra_column_rows": 3
+    },
+    "主页剧情": {
+      "body_rows": 124,
+      "translated_rows": 72,
+      "files": 14,
+      "partially_translated_files": 13,
+      "choice_rows": 2,
+      "fully_translated_files": 1
+    },
+    "八宮めぐる": {
+      "body_rows": 9424,
+      "translated_rows": 9099,
+      "files": 237,
+      "fully_translated_files": 155,
+      "choice_rows": 181,
+      "partially_translated_files": 82,
+      "extra_column_rows": 63
+    },
+    "和泉愛依": {
+      "body_rows": 6510,
+      "translated_rows": 6382,
+      "files": 158,
+      "fully_translated_files": 129,
+      "choice_rows": 97,
+      "partially_translated_files": 29,
+      "extra_column_rows": 1
+    },
+    "園田智代子": {
+      "body_rows": 4088,
+      "translated_rows": 3983,
+      "files": 80,
+      "partially_translated_files": 20,
+      "fully_translated_files": 60,
+      "choice_rows": 67,
+      "extra_column_rows": 1
+    },
+    "大崎甘奈": {
+      "body_rows": 6309,
+      "translated_rows": 5967,
+      "files": 170,
+      "fully_translated_files": 101,
+      "choice_rows": 150,
+      "partially_translated_files": 69,
+      "extra_column_rows": 1
+    },
+    "大崎甜花": {
+      "body_rows": 6444,
+      "translated_rows": 6209,
+      "files": 184,
+      "fully_translated_files": 120,
+      "choice_rows": 169,
+      "partially_translated_files": 63,
+      "extra_column_rows": 1,
+      "untranslated_files": 1
+    },
+    "小宮果穂": {
+      "body_rows": 6641,
+      "translated_rows": 6537,
+      "files": 160,
+      "partially_translated_files": 39,
+      "fully_translated_files": 121,
+      "choice_rows": 166
+    },
+    "市川雛菜": {
+      "body_rows": 6213,
+      "translated_rows": 5858,
+      "files": 171,
+      "fully_translated_files": 79,
+      "partially_translated_files": 92,
+      "choice_rows": 154,
+      "extra_column_rows": 2
+    },
+    "幽谷霧子": {
+      "body_rows": 7271,
+      "translated_rows": 6901,
+      "files": 149,
+      "partially_translated_files": 91,
+      "fully_translated_files": 58,
+      "choice_rows": 121,
+      "extra_column_rows": 1
+    },
+    "斑鳩ルカ": {
+      "body_rows": 5178,
+      "translated_rows": 4783,
+      "files": 160,
+      "fully_translated_files": 90,
+      "choice_rows": 129,
+      "partially_translated_files": 70
+    },
+    "月岡恋鐘": {
+      "body_rows": 7499,
+      "translated_rows": 7303,
+      "files": 148,
+      "partially_translated_files": 56,
+      "fully_translated_files": 92,
+      "choice_rows": 124
+    },
+    "有栖川夏葉": {
+      "body_rows": 6180,
+      "translated_rows": 5935,
+      "files": 175,
+      "partially_translated_files": 68,
+      "fully_translated_files": 107,
+      "choice_rows": 174,
+      "no_script_id_files": 1,
+      "extra_column_rows": 1
+    },
+    "有馬かな": {
+      "body_rows": 745,
+      "translated_rows": 704,
+      "choice_rows": 12,
+      "files": 20,
+      "partially_translated_files": 10,
+      "fully_translated_files": 10
+    },
+    "杜野凛世": {
+      "body_rows": 7556,
+      "translated_rows": 7316,
+      "files": 170,
+      "fully_translated_files": 107,
+      "choice_rows": 174,
+      "partially_translated_files": 63,
+      "extra_column_rows": 5
+    },
+    "桑山千雪": {
+      "body_rows": 4175,
+      "translated_rows": 4079,
+      "files": 114,
+      "fully_translated_files": 85,
+      "partially_translated_files": 29,
+      "choice_rows": 121
+    },
+    "樋口円香": {
+      "body_rows": 8234,
+      "translated_rows": 7503,
+      "files": 211,
+      "fully_translated_files": 57,
+      "partially_translated_files": 154,
+      "choice_rows": 163,
+      "extra_column_rows": 2
+    },
+    "櫻木真乃": {
+      "body_rows": 9287,
+      "translated_rows": 9082,
+      "files": 225,
+      "fully_translated_files": 174,
+      "choice_rows": 181,
+      "partially_translated_files": 51,
+      "extra_column_rows": 87
+    },
+    "浅倉透": {
+      "body_rows": 7421,
+      "translated_rows": 7124,
+      "files": 192,
+      "fully_translated_files": 111,
+      "partially_translated_files": 81,
+      "choice_rows": 154
+    },
+    "田中摩美々": {
+      "body_rows": 5757,
+      "translated_rows": 5415,
+      "files": 144,
+      "partially_translated_files": 87,
+      "choice_rows": 136,
+      "fully_translated_files": 57,
+      "extra_column_rows": 1
+    },
+    "白瀬咲耶": {
+      "body_rows": 7961,
+      "translated_rows": 7659,
+      "files": 196,
+      "partially_translated_files": 82,
+      "choice_rows": 157,
+      "fully_translated_files": 114,
+      "extra_column_rows": 3
+    },
+    "福丸小糸": {
+      "body_rows": 6494,
+      "translated_rows": 6015,
+      "files": 180,
+      "fully_translated_files": 72,
+      "choice_rows": 160,
+      "partially_translated_files": 108,
+      "extra_column_rows": 1
+    },
+    "緋田美琴": {
+      "body_rows": 6501,
+      "translated_rows": 6329,
+      "files": 225,
+      "fully_translated_files": 190,
+      "choice_rows": 167,
+      "partially_translated_files": 35,
+      "extra_column_rows": 2
+    },
+    "芹沢あさひ": {
+      "body_rows": 8338,
+      "translated_rows": 8152,
+      "files": 215,
+      "fully_translated_files": 152,
+      "partially_translated_files": 63,
+      "extra_column_rows": 5,
+      "choice_rows": 172
+    },
+    "营业剧情": {
+      "body_rows": 24,
+      "translated_rows": 24,
+      "files": 2,
+      "fully_translated_files": 2
+    },
+    "西城樹里": {
+      "body_rows": 4461,
+      "translated_rows": 4291,
+      "files": 107,
+      "partially_translated_files": 56,
+      "fully_translated_files": 51,
+      "choice_rows": 69
+    },
+    "郁田はるき": {
+      "body_rows": 3473,
+      "translated_rows": 3213,
+      "files": 102,
+      "fully_translated_files": 45,
+      "partially_translated_files": 57,
+      "choice_rows": 52
+    },
+    "鈴木羽那": {
+      "body_rows": 3509,
+      "translated_rows": 3274,
+      "files": 110,
+      "fully_translated_files": 58,
+      "choice_rows": 67,
+      "partially_translated_files": 52,
+      "extra_column_rows": 20
+    },
+    "風野灯織": {
+      "body_rows": 8874,
+      "translated_rows": 8413,
+      "files": 213,
+      "partially_translated_files": 127,
+      "choice_rows": 178,
+      "fully_translated_files": 86
+    },
+    "黒川あかね": {
+      "body_rows": 210,
+      "translated_rows": 210,
+      "files": 3,
+      "fully_translated_files": 3
+    },
+    "黛冬優子": {
+      "body_rows": 7997,
+      "translated_rows": 7557,
+      "files": 205,
+      "partially_translated_files": 91,
+      "choice_rows": 175,
+      "fully_translated_files": 114,
+      "extra_column_rows": 1
+    }
+  },
+  "parse_errors": [],
+  "duplicate_examples": [
+    {
+      "produce_events/202600801": [
+        "data/story/斑鳩ルカ/SMASH/1.鬱屈.csv",
+        "data/story/斑鳩ルカ/【SMASH】 斑鳩ルカ/1.鬱屈.csv"
+      ]
+    },
+    {
+      "produce_events/202600802": [
+        "data/story/斑鳩ルカ/SMASH/2.衝突1.csv",
+        "data/story/斑鳩ルカ/【SMASH】 斑鳩ルカ/2.衝突1.csv"
+      ]
+    },
+    {
+      "produce_events/202600803": [
+        "data/story/斑鳩ルカ/SMASH/3.衝突2.csv",
+        "data/story/斑鳩ルカ/【SMASH】 斑鳩ルカ/3.衝突2.csv"
+      ]
+    },
+    {
+      "produce_events/202600804": [
+        "data/story/斑鳩ルカ/SMASH/4.熱.csv",
+        "data/story/斑鳩ルカ/【SMASH】 斑鳩ルカ/4.熱.csv"
+      ]
+    },
+    {
+      "produce_events/202600811": [
+        "data/story/斑鳩ルカ/SMASH/TE.また夏が来る.csv",
+        "data/story/斑鳩ルカ/【SMASH】 斑鳩ルカ/TE.また夏が来る.csv"
+      ]
+    },
+    {
+      "produce_events/500200404": [
+        "data/story/月岡恋鐘/Landing Point篇/10.3曲目前コミュ《ユニット限定》.csv",
+        "data/story/白瀬咲耶/白濑咲耶Landing Point/10.3曲目前コミュ《ユニット限定》.csv"
+      ]
+    },
+    {
+      "produce_events/500200405": [
+        "data/story/月岡恋鐘/Landing Point篇/12.ライブ後コミュ《ユニット》.csv",
+        "data/story/白瀬咲耶/白濑咲耶Landing Point/12.ライブ後コミュ《ユニット》.csv"
+      ]
+    },
+    {
+      "produce_events/500200401": [
+        "data/story/月岡恋鐘/Landing Point篇/6.1曲目前コミュ《ユニット限定》.csv",
+        "data/story/白瀬咲耶/白濑咲耶Landing Point/6.1曲目前コミュ《ユニット限定》.csv"
+      ]
+    },
+    {
+      "produce_events/500200403": [
+        "data/story/月岡恋鐘/Landing Point篇/8.2曲目前コミュ《ユニット限定》.csv",
+        "data/story/白瀬咲耶/白濑咲耶Landing Point/8.2曲目前コミュ《ユニット限定》.csv"
+      ]
+    },
+    {
+      "produce_events/102700301": [
+        "data/story/鈴木羽那/铃木羽那G.R.A.D.編/1 ビジュ120点♡ラブストーリー.csv",
+        "data/story/鈴木羽那/铃木羽那G.R.A.D.編/1ビジュ120点♡ラブストーリー.csv"
+      ]
+    }
+  ]
+}

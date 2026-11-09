@@ -1,0 +1,196 @@
+{
+  "albums_read": 28,
+  "unique_scripts": 3655,
+  "present_in_csv": 2077,
+  "missing_from_csv": 1578,
+  "by_script_type": {
+    "produce_communication_auditions": {
+      "album_scripts": 112,
+      "present_in_csv": 79
+    },
+    "produce_communication_cheers": {
+      "album_scripts": 168,
+      "present_in_csv": 106
+    },
+    "produce_communication_televisions": {
+      "album_scripts": 56,
+      "present_in_csv": 26
+    },
+    "produce_communications": {
+      "album_scripts": 420,
+      "present_in_csv": 317
+    },
+    "produce_events": {
+      "album_scripts": 1641,
+      "present_in_csv": 1156
+    },
+    "special_communications": {
+      "album_scripts": 1258,
+      "present_in_csv": 393
+    }
+  },
+  "unknown_categories": {},
+  "errors": [],
+  "missing_examples": [
+    {
+      "script": "produce_events/100100308",
+      "title": "G.R.A.D.敗退コミュ①",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/1001003071",
+      "title": "G.R.A.D.敗退コミュ②前",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/1001003072",
+      "title": "G.R.A.D.敗退コミュ②後",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/700100108",
+      "title": "シーズン4（失敗）",
+      "album_type": "wing",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_communication_cheers/400100100022",
+      "title": "オーディション前⑤",
+      "album_type": "wing",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_communication_auditions/500100100022",
+      "title": "オーディション後 敗北②",
+      "album_type": "wing",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_communication_televisions/600100100011",
+      "title": "TV出演後コミュ①",
+      "album_type": "wing",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_communication_televisions/600100100021",
+      "title": "TV出演後コミュ②",
+      "album_type": "wing",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100202",
+      "title": "リハーサル後",
+      "album_type": "fan_meeting",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100301",
+      "title": "予選前コミュ",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100302",
+      "title": "予選後コミュ　勝利",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100303",
+      "title": "予選後コミュ　敗北",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100304",
+      "title": "敗者復活前コミュ",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100305",
+      "title": "敗者復活後コミュ　勝利",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100306",
+      "title": "敗者復活後コミュ　敗北",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100307",
+      "title": "決勝前コミュ",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100308",
+      "title": "決勝後コミュ　勝利",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100309",
+      "title": "決勝後コミュ　敗北①",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "produce_events/600100310",
+      "title": "決勝後コミュ　敗北②",
+      "album_type": "3rd_produce_area",
+      "idols": [
+        1
+      ]
+    },
+    {
+      "script": "special_communications/490200101",
+      "title": "【櫻木 真乃】 誕生日ミニコミュ①",
+      "album_type": "birthday_event",
+      "idols": [
+        1
+      ]
+    }
+  ]
+}
