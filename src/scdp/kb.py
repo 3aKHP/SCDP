@@ -7,6 +7,7 @@ import subprocess
 import uuid
 from pathlib import Path
 from .build import COLLECTION
+from .archive import normalize_metadata
 from .core import canonical, sha, write_json
 from .package import validate_tree
 
@@ -104,6 +105,7 @@ def stage(bundle, kb_root, python, output, base_sources=None):
     native = output/"collection.tar.gz"
     run("validate", "validate-collection", "--sources-root", str(output/"candidate"), "--collection-id", COLLECTION)
     run("pack", "pack-collection", "--sources-root", str(output/"candidate"), "--collection-id", COLLECTION, "--output", str(native))
+    write_json(receipts/"archive-normalization.json", normalize_metadata(native))
     replacing = (output/"sources/collections"/COLLECTION).exists()
     run("install", "install-package", "--package", str(native), "--sources-root", str(output/"sources"), *(["--replace"] if replacing else []))
     if not replacing:

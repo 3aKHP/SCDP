@@ -28,3 +28,11 @@ def test_metadata_identity_conflict_and_no_application_state():
     serialized = canonical([catalog.entities, catalog.relations, catalog.story_metadata])
     assert b'must-not-appear' not in serialized and b'private-id' not in serialized
     assert any(r['kind'] == 'script_lookup' for r in catalog.unresolved)
+
+
+def test_produce_card_event_title_field():
+    catalog=Catalog({'json/fiction/42.json':1})
+    data={'enzaId':'100','idolId':1,'cardName':'Fiction card','cardIdolEvents':[{'eventId':42,'eventTitle':'Fiction event'}]}
+    catalog.ingest('https://metadata.example.test/card/100',data,sha(canonical(data)))
+    assert catalog.story_metadata['fiction/42'][0]['title']=='Fiction event'
+    assert any(r['type']=='card_has_story' for r in catalog.relations)

@@ -67,3 +67,28 @@ def test_unknown_field_text_and_graph_are_preserved():
     assert any(o['text']=='unknown argument' for o in parsed['occurrences'])
     assert any(e['from']==3 and e['status']=='unresolved' for e in parsed['graph']['edges'])
     assert parsed['frames']==frames
+
+
+def test_source_state_condition_keeps_both_routes():
+    frames=[{'command':'conditional_jump','commandKey':'fiction_read','nextLabel':'seen'},
+            {'text':'Fiction unseen route','nextLabel':'end'},
+            {'label':'seen','text':'Fiction seen route'}, {'label':'end'}]
+    story=project('demo/condition',frames,'0'*64,'0'*64)
+    edges=[e for e in story['graph']['edges'] if e['from']==0]
+    assert {e['predicate']['equals'] for e in edges}=={True,False}
+    assert {tuple(e['targets']) for e in edges}=={(1,),(2,)}
+    assert all(e['status']=='conditional' for e in edges)
+    assert not story['graph']['notProvenReachable']
+
+
+def test_duplicate_label_uses_first_source_occurrence():
+    frames=[{'nextLabel':'same'},{'label':'same','text':'Fiction first'},{'label':'same','text':'Fiction second'}]
+    story=project('demo/duplicate-label',frames,'0'*64,'0'*64)
+    jump=story['graph']['edges'][0]
+    assert jump['targets']==[1] and jump['labelCandidates']==[1,2] and jump['status']=='resolved'
+
+
+def test_control_graph_schema_rejects_invalid_target_type():
+    bundle=golden()
+    bundle['stories'][0]['graph']['edges'][0]['targets']=['not-an-index']
+    with pytest.raises(ValidationError):validate(bundle)

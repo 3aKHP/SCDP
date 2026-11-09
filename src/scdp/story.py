@@ -3,7 +3,7 @@ from collections import deque
 from .core import sha
 
 READABLE = {"text", "select", "title", "caption", "message"}
-CONTROL = {"select", "label", "nextLabel"}
+CONTROL = {"select", "label", "nextLabel", "command", "commandKey"}
 MEDIA = {"voice", "bg", "fg", "middleFg", "bgm", "se", "charId", "charCategory", "charType", "movie", "still", "stillId", "stillType"}
 # Presentation-only fields observed in the client scenario command handler. Every
 # unrecognized field remains visible evidence and is never silently dropped.
@@ -34,17 +34,29 @@ def control_graph(frames, labels, unknown_by_frame):
     edges = []
     entries = [0] if frames else []
     for index, frame in enumerate(frames):
-        if "nextLabel" in frame:
+        if frame.get("command") == "conditional_jump" and "nextLabel" in frame:
+            value = frame["nextLabel"]
+            key = frame.get("commandKey")
+            valid_key = isinstance(key,str) and bool(key)
+            targets = labels.get(value,[]) if isinstance(value,str) else []
+            edges.append({"from":index,"targets":targets[:1],"labelCandidates":targets,"kind":"conditional_jump","raw":value,
+                          "status":"conditional" if valid_key and bool(targets) else "unresolved",
+                          "predicate":{"commandKey":key,"equals":True,"evaluation":"requires-consumer-state","coercion":"javascript-truthiness"}})
+            if index+1 < len(frames):
+                edges.append({"from":index,"targets":[index+1],"kind":"conditional_fallthrough",
+                              "status":"conditional" if valid_key else "unresolved",
+                              "predicate":{"commandKey":key,"equals":False,"evaluation":"requires-consumer-state","coercion":"javascript-truthiness"}})
+        elif "nextLabel" in frame:
             value = frame["nextLabel"]
             targets = labels.get(value, []) if isinstance(value, str) else []
-            edges.append({"from": index, "targets": targets, "kind": "choice" if "select" in frame else "jump",
-                          "status": "resolved" if len(targets) == 1 and not unknown_by_frame.get(index) else "unresolved", "raw": value})
-        elif "select" in frame:
+            edges.append({"from": index, "targets": targets[:1], "labelCandidates": targets, "kind": "choice" if frame.get("select") else "jump",
+                          "status": "resolved" if targets and not unknown_by_frame.get(index) else "unresolved", "raw": value})
+        elif isinstance(frame.get("select"),str) and frame["select"]:
             edges.append({"from": index, "targets": [], "kind": "choice", "status": "unresolved", "raw": None})
         elif index+1 < len(frames):
             end = index+1
-            if "select" in frames[end]:
-                while end+1 < len(frames) and "select" in frames[end+1]:
+            if frames[end].get("select"):
+                while end+1 < len(frames) and frames[end+1].get("select"):
                     end += 1
                 targets = list(range(index+1, end+1))
                 kind = "choice_group"
@@ -52,14 +64,14 @@ def control_graph(frames, labels, unknown_by_frame):
                 targets, kind = [index+1], "fallthrough"
             edges.append({"from": index, "targets": targets, "kind": kind,
                           "status": "unresolved" if unknown_by_frame.get(index) else "resolved"})
-    if frames and "select" in frames[0]:
+    if frames and frames[0].get("select"):
         end = 0
-        while end+1 < len(frames) and "select" in frames[end+1]:
+        while end+1 < len(frames) and frames[end+1].get("select"):
             end += 1
         entries = list(range(end+1))
     adjacency = {i: set() for i in range(len(frames))}
     for edge in edges:
-        if edge["status"] == "resolved":
+        if edge["status"] in ("resolved", "conditional"):
             adjacency[edge["from"]].update(edge["targets"])
     seen, pending = set(), list(entries)
     while pending:
@@ -82,7 +94,7 @@ def control_graph(frames, labels, unknown_by_frame):
                 queue.append(target)
     return {"nodes": list(range(len(frames))), "entries": entries, "edges": edges,
             "hasResolvedCycle": removed < len(frames), "notProvenReachable": sorted(set(adjacency)-seen),
-            "semantics": "explicit labels, contiguous choices and potential order; unknown commands are unresolved"}
+            "semantics": "potential paths including both source-state condition outcomes; state values and unknown commands are unresolved"}
 
 
 def project(script_id, frames, raw_sha, decoded_sha):
@@ -93,6 +105,8 @@ def project(script_id, frames, raw_sha, decoded_sha):
         if isinstance(frame.get("label"), str):
             labels.setdefault(frame["label"], []).append(index)
         unknown_by_frame[index] = sorted(set(frame)-known)
+        if "command" in frame and frame["command"] != "conditional_jump":
+            unknown_by_frame[index].append("command")
     for pointer, value in walk(frames):
         parts = pointer.split("/")
         field = parts[-1].replace("~1", "/").replace("~0", "~")
@@ -106,7 +120,11 @@ def project(script_id, frames, raw_sha, decoded_sha):
                 record = {"pointer": pointer, "field": key, "raw": value, "status": "unresolved"}
                 if key == "nextLabel" and isinstance(value, str):
                     targets = labels.get(value, [])
-                    record.update(targets=targets, status="resolved" if len(targets) == 1 else "unresolved")
+                    record.update(targets=targets[:1], labelCandidates=targets, resolution="first-label-in-source-order", status="resolved" if targets else "unresolved")
+                elif key == "command" and value == "conditional_jump":
+                    record.update(status="preserved", semantic="source-state-conditional")
+                elif key == "commandKey" and frame.get("command") == "conditional_jump":
+                    record.update(status="preserved", evaluation="requires-consumer-state")
                 elif key in ("select", "label") and isinstance(value, str):
                     record["status"] = "preserved"
                 controls.append(record)

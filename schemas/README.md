@@ -22,3 +22,7 @@
 Story 可附带 graph、unknownFrameFields 和 metadata。图包含原始帧节点、选择组、显式跳转、
 循环观察及未证明可达节点；未知指令的边声明 unresolved。原始帧始终保留。
 来源独立写入 sources.json，字段缺口及冲突写入 metadata-report.json，范围与译文状态写入 coverage.json。
+
+ControlEvidence、ControlGraph、ControlEdge 和 MediaReference 具有单独定义。
+条件跳转以两个带 predicate 的边表示；谓词声明 JavaScript 真值规则，实际状态值由消费者提供。
+重复标签使用 source-order 首次声明，labelCandidates 保留全部原件声明位置。

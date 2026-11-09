@@ -303,13 +303,13 @@
         "controls": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/ControlEvidence"
           }
         },
         "mediaReferences": {
           "type": "array",
           "items": {
-            "type": "object"
+            "$ref": "#/$defs/MediaReference"
           }
         },
         "unresolvedFields": {
@@ -328,7 +328,7 @@
           "type": "object"
         },
         "graph": {
-          "type": "object"
+          "$ref": "#/$defs/ControlGraph"
         },
         "unknownFrameFields": {
           "type": "array",
@@ -577,6 +577,218 @@
         "predecessor",
         "validation",
         "files"
+      ],
+      "additionalProperties": false
+    },
+    "ControlEvidence": {
+      "type": "object",
+      "properties": {
+        "pointer": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "raw": {},
+        "status": {
+          "enum": [
+            "preserved",
+            "resolved",
+            "unresolved"
+          ]
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "labelCandidates": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "resolution": {
+          "type": "string"
+        },
+        "semantic": {
+          "type": "string"
+        },
+        "evaluation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pointer",
+        "field",
+        "raw",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "ControlEdge": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "kind": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "resolved",
+            "unresolved",
+            "conditional"
+          ]
+        },
+        "raw": {},
+        "labelCandidates": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "predicate": {
+          "type": "object",
+          "properties": {
+            "commandKey": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "equals": {
+              "type": "boolean"
+            },
+            "evaluation": {
+              "type": "string"
+            },
+            "coercion": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "commandKey",
+            "equals",
+            "evaluation"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "from",
+        "targets",
+        "kind",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "ControlGraph": {
+      "type": "object",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ControlEdge"
+          }
+        },
+        "hasResolvedCycle": {
+          "type": "boolean"
+        },
+        "notProvenReachable": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "uniqueItems": true
+        },
+        "semantics": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nodes",
+        "entries",
+        "edges",
+        "hasResolvedCycle",
+        "notProvenReachable",
+        "semantics"
+      ],
+      "additionalProperties": false
+    },
+    "MediaReference": {
+      "type": "object",
+      "properties": {
+        "pointer": {
+          "type": "string"
+        },
+        "field": {
+          "type": "string"
+        },
+        "raw": {},
+        "assetId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "logicalPath": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "status": {
+          "enum": [
+            "resolved",
+            "unresolved",
+            "sentinel"
+          ]
+        },
+        "rule": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "pointer",
+        "field",
+        "raw",
+        "assetId",
+        "status"
       ],
       "additionalProperties": false
     }

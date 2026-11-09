@@ -34,7 +34,7 @@ def check_occurrences(story, document):
     expected = {}
     known = READABLE | CONTROL | MEDIA | PRESENTATION
     for index, frame in enumerate(story["frames"]):
-        pending = [(f"/{index}/"+key.replace("~", "~0").replace("/", "~1"), value, key not in known, key)
+        pending = [(f"/{index}/"+key.replace("~", "~0").replace("/", "~1"), value, key not in known or (key=="command" and value!="conditional_jump"), key)
                    for key, value in frame.items()]
         while pending:
             pointer, value, unknown, field = pending.pop()
@@ -160,14 +160,24 @@ def validate_semantics(root, manifest):
         graph = story.get("graph", {})
         if graph.get("nodes") != list(range(len(story["frames"]))):
             raise ValueError("graph_node_set_mismatch")
-        jumps = {edge["from"]: edge for edge in graph.get("edges", []) if edge["kind"] in ("jump", "choice")}
+        jumps = {edge["from"]: edge for edge in graph.get("edges", []) if edge["kind"] in ("jump", "choice", "conditional_jump")}
         for i, frame in enumerate(story["frames"]):
-            if "nextLabel" in frame or "select" in frame:
+            if "nextLabel" in frame or (isinstance(frame.get("select"),str) and frame["select"]):
                 if i not in jumps or jumps[i]["raw"] != frame.get("nextLabel"):
                     raise ValueError("graph_control_edge_missing")
                 value = frame.get("nextLabel")
-                if jumps[i]["targets"] != (labels.get(value, []) if isinstance(value, str) else []):
+                if jumps[i]["targets"] != (labels.get(value, [])[:1] if isinstance(value, str) else []):
                     raise ValueError("graph_control_target_mismatch")
+        for i, frame in enumerate(story["frames"]):
+            if frame.get("command") == "conditional_jump" and "nextLabel" in frame:
+                outcomes = [e for e in graph.get("edges",[]) if e["from"]==i and e["kind"].startswith("conditional_")]
+                expected = {True,False} if i+1 < len(story["frames"]) else {True}
+                if {e.get("predicate",{}).get("equals") for e in outcomes} != expected:
+                    raise ValueError("conditional_outcome_missing")
+                if any(e["predicate"]["commandKey"] != frame.get("commandKey") for e in outcomes):
+                    raise ValueError("conditional_source_key_changed")
+                if i+1 < len(story["frames"]) and not any(e["kind"]=="conditional_fallthrough" and e["targets"]==[i+1] for e in outcomes):
+                    raise ValueError("conditional_fallthrough_missing")
         for edge in graph.get("edges", []):
             if edge["from"] not in graph["nodes"] or any(t not in graph["nodes"] for t in edge["targets"]):
                 raise ValueError("graph_dangling_edge")

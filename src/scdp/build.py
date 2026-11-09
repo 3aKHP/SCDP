@@ -80,6 +80,8 @@ def render(story, translations):
                 lines.extend(["中文（"+("通用词条回退" if translation["kind"]=="fallback" else "人工来源")+"）：", "", fence(translation["text"]), ""])
             else:
                 lines.extend(["译文状态："+(translation["status"] if translation else "missing"), ""])
+        if frame.get("command") == "conditional_jump":
+            lines.extend(["条件跳转：条件为真时跳到 nextLabel，为假时继续下一帧；条件值由消费状态提供，两侧正文均保留。", ""])
         for control in controls:
             lines.extend(["控制证据："+canonical(control).decode(), ""])
     return "\n".join(lines)+"\n"

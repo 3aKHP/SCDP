@@ -136,9 +136,9 @@ class Catalog:
             character = self.entity("character", data["idolId"], (data.get("idol") or {}).get("idolName"), provenance)
             card = self.entity("card", data["enzaId"], data.get("cardName"), provenance)
             self.relation(card, character, "card_belongs_to_character", provenance)
-            for group in ("cardSupportEvents", "cardProduceEvents", "produceEvents"):
+            for group in ("cardSupportEvents", "cardIdolEvents", "cardProduceEvents", "produceEvents"):
                 for row in data.get(group, []):
-                    self.communication(row.get("eventId"), row.get("eventName"), provenance, character=character, card=card)
+                    self.communication(row.get("eventId"), row.get("eventName") or row.get("eventTitle"), provenance, character=character, card=card)
         else:
             self.unresolved.append({"kind": "unsupported_metadata_shape", "provenance": provenance})
 
