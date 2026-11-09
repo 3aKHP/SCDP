@@ -1,0 +1,17 @@
+[Unit]
+Description=SCDP private immutable text package delivery
+After=network.target
+
+[Service]
+Type=simple
+User=@RUN_USER@
+WorkingDirectory=/data/scdp
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ExecStart=/opt/scdp/venv/bin/python -m scdp.distribution --root /data/scdp/releases --token-file /etc/scdp/admin.token --port 5129
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

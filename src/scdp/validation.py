@@ -63,7 +63,7 @@ def check_occurrences(story, document):
         if not opening.endswith("text") or len(delimiter) < 3 or set(delimiter) != {"`"}:
             raise ValueError("document_occurrence_fence")
         end = document.find("\n"+delimiter+"\n", line_end+1)
-        if end < 0 or document[line_end+1:end] != occurrence["text"]:
+        if end < 0 or document[line_end+1:end] != occurrence["text"].replace("\r\n", "\n").replace("\r", "\n"):
             raise ValueError("document_occurrence_changed")
         cursor = end+len(delimiter)+2
         positions.append((occurrence["pointer"], position, cursor))
@@ -74,21 +74,26 @@ def check_occurrences(story, document):
 
 def validate_semantics(root, manifest):
     root = Path(root)
-    required = ["assets.jsonl", "versions.jsonl", "stories.jsonl", "translations.jsonl", "entities.jsonl", "relations.jsonl", "coverage.json", "sources.json"]
+    required = ["assets.jsonl", "versions.jsonl", "stories.jsonl", "translations.jsonl", "entities.jsonl", "relations.jsonl", "coverage.json", "sources.json", "schema.json"]
     if any(not (root/name).is_file() for name in required):
         raise ValueError("missing_standard_record_file")
+    if sha((root/"schema.json").read_bytes()) != manifest["inputs"]["schemaSha256"]:
+        raise ValueError("package_schema_digest_mismatch")
     assets = {}
     for asset in records(root/"assets.jsonl", "Asset"):
         path = safe_path(asset["logicalPath"])
         if asset["assetId"] != "enza:"+path or asset["assetId"] in assets:
             raise ValueError("asset_identity_mismatch")
         assets[asset["assetId"]] = asset
-    inventory, versions = {}, {}
+    inventory, versions, historical_available = {}, {}, set()
     for version in records(root/"versions.jsonl", "AssetVersion"):
         aid = version["assetId"]
         if aid not in assets or aid in versions:
             raise ValueError("asset_version_set_mismatch")
-        inventory[assets[aid]["logicalPath"]] = version["sourceVersion"]
+        if version["presence"] == "current":
+            inventory[assets[aid]["logicalPath"]] = version["sourceVersion"]
+        elif version["presence"] == "historical" and version["availability"] == "available" and selected(assets[aid]["logicalPath"]):
+            historical_available.add(assets[aid]["logicalPath"].removeprefix("json/").removesuffix(".json"))
         versions[aid] = version["availability"]
         if version["availability"] == "available" and not version["representations"]:
             raise ValueError("available_without_representation")
@@ -106,7 +111,10 @@ def validate_semantics(root, manifest):
                 raise ValueError("dependency_missing")
             if dependency["required"] and versions[asset["assetId"]] == "available" and versions[dependency["assetId"]] != "available":
                 raise ValueError("required_dependency_unavailable")
-    chosen = {p.removeprefix("json/").removesuffix(".json") for p in inventory if selected(p)}
+    current_chosen = {p.removeprefix("json/").removesuffix(".json") for p in inventory if selected(p)}
+    chosen = current_chosen | historical_available
+    if manifest["scope"].get("historicalStories", 0) != len(historical_available):
+        raise ValueError("historical_story_count_mismatch")
     collection_manifest = parse_json((root/"collection/import-manifest.json").read_bytes())
     docs = {d["scriptId"]: d for d in collection_manifest["documents"]}
     actual_docs = {p.relative_to(root/"collection").as_posix() for p in (root/"collection/docs").rglob("*.md")}
@@ -130,6 +138,8 @@ def validate_semantics(root, manifest):
         document = (root/"collection"/safe_path(docs[sid]["path"])).read_bytes()
         if sha(document) != docs[sid]["sha256"] or len(document) != docs[sid]["size"]:
             raise ValueError("document_manifest_mismatch")
+        if b"\r" in document:
+            raise ValueError("document_non_lf_line_endings")
         count, spans = check_occurrences(story, document.decode("utf-8"))
         if versions[story["assetId"]] != "available":
             raise ValueError("story_availability_mismatch")
@@ -164,7 +174,7 @@ def validate_semantics(root, manifest):
         if count != docs[sid]["occurrences"] or len(story["frames"]) != docs[sid]["frames"]:
             raise ValueError("document_coverage_count_mismatch")
         occurrence_count += count
-        empty_stories += not any(o["text"].strip() for o in story["occurrences"])
+        empty_stories += not any(o["field"] in READABLE and o["text"].strip() for o in story["occurrences"])
         for control in story["controls"]:
             if pointer_value(story["frames"], control["pointer"]) != control["raw"]:
                 raise ValueError("control_evidence_changed")
@@ -178,7 +188,7 @@ def validate_semantics(root, manifest):
                 context = sha(canonical(story["frames"][max(0, index-1):index+2]))
                 translation_sources[(sid, occurrence["pointer"])] = (occurrence["sha256"], context)
                 translation_spans[(sid, occurrence["pointer"])] = spans[occurrence["pointer"]]
-    if seen != chosen or len(chosen) != manifest["scope"]["selected"] or manifest["scope"]["stories"] != len(chosen):
+    if seen != chosen or len(current_chosen) != manifest["scope"]["selected"] or manifest["scope"]["stories"] != len(chosen):
         raise ValueError("story_selection_mismatch")
     translation_seen, translation_counts = set(), Counter()
     current_document_id, current_document = None, ""
@@ -195,7 +205,7 @@ def validate_semantics(root, manifest):
                 current_document_id = row["scriptId"]
                 current_document = (root/"collection"/docs[current_document_id]["path"]).read_bytes().decode("utf-8")
             start, end = translation_spans[key]
-            if "\n"+row["text"]+"\n" not in current_document[start:end]:
+            if "\n"+row["text"].replace("\r\n", "\n").replace("\r", "\n")+"\n" not in current_document[start:end]:
                 raise ValueError("document_translation_missing")
         if row["status"] != "aligned" and row["text"] is not None:
             raise ValueError("unresolved_translation_claim_invalid")
@@ -213,6 +223,6 @@ def validate_semantics(root, manifest):
     report = {"assets": len(assets), "stories": len(seen), "occurrences": occurrence_count,
               "emptyStories": empty_stories, "translations": dict(translation_counts), "controls": dict(control_counts), "entities": len(entities)}
     coverage = parse_json((root/"coverage.json").read_bytes())
-    if coverage["stories"] != len(seen) or coverage["occurrences"] != occurrence_count or coverage["translations"] != dict(translation_counts):
+    if coverage["stories"] != len(seen) or coverage["occurrences"] != occurrence_count or coverage["translations"] != dict(translation_counts) or coverage["emptyStories"] != empty_stories:
         raise ValueError("coverage_report_mismatch")
     return report

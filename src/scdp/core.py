@@ -89,3 +89,20 @@ def job_lock(root):
             yield
         finally:
             fcntl.flock(stream, fcntl.LOCK_UN)
+
+
+@contextlib.contextmanager
+def file_lock(path):
+    """Participate in an operator-provided deployment lock without changing its inode."""
+    if path is None:
+        yield
+        return
+    with Path(path).open("a") as stream:
+        try:
+            fcntl.flock(stream, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            raise ValueError("deployment_locked") from None
+        try:
+            yield
+        finally:
+            fcntl.flock(stream, fcntl.LOCK_UN)

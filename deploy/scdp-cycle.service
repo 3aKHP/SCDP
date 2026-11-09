@@ -1,0 +1,14 @@
+[Unit]
+Description=SCDP bounded update and consumer activation
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=@RUN_USER@
+WorkingDirectory=/data/scdp
+UMask=0077
+PrivateTmp=true
+ExecStart=/opt/scdp/venv/bin/scdp cycle --config /etc/scdp/cycle.json
+TimeoutStartSec=7200
+KillSignal=SIGINT

@@ -45,7 +45,31 @@ def main():
     kb.add_argument("--kb-root", required=True)
     kb.add_argument("--python", required=True)
     kb.add_argument("--output", required=True)
+    kb.add_argument("--base-sources", help="clone and preserve an existing source tree")
+    activate = sub.add_parser("kb-activate", help="switch verified sources and index during a service maintenance window")
+    activate.add_argument("candidate")
+    activate.add_argument("--sources", required=True)
+    activate.add_argument("--index", required=True)
+    activate.add_argument("--recovery", required=True)
+    activate.add_argument("--service", required=True)
+    activate.add_argument("--deployment-lock")
+    rollback = sub.add_parser("kb-rollback", help="restore the previous complete source and index pair")
+    rollback.add_argument("--recovery", required=True)
+    rollback.add_argument("--service", required=True)
+    rollback.add_argument("--deployment-lock")
+    recover = sub.add_parser("kb-recover", help="recover an interrupted source/index switch from its journal")
+    recover.add_argument("--recovery", required=True)
+    recover.add_argument("--activation-id", required=True)
+    recover.add_argument("--service", required=True)
+    recover.add_argument("--deployment-lock")
+    tick = sub.add_parser("cycle", help="run one locked, budgeted discovery/build/publication cycle")
+    tick.add_argument("--config", required=True)
     args = parser.parse_args()
+    if args.command == "cycle":
+        from pathlib import Path
+        from .cycle import cycle
+        print(json.dumps(cycle(json.loads(Path(args.config).read_bytes())),ensure_ascii=False,sort_keys=True))
+        return
     with job_lock(args.work):
         downloader = Downloader(args.work, budget=args.budget, rate=args.rate)
         try:
@@ -54,9 +78,18 @@ def main():
                 result = {k: v for k, v in result.items() if k not in ("resources", "shards", "manifest")}
             elif args.command in ("fetch", "resume"):
                 result = fetch_stories(downloader, load_observation(args.work), workers=args.workers, limit=args.limit, sample=args.sample)
+            elif args.command == "kb-activate":
+                from .activation import activate
+                result = activate(args.candidate, args.sources, args.index, args.recovery, service=args.service, deployment_lock=args.deployment_lock)
+            elif args.command == "kb-recover":
+                from .activation import recover_switch
+                result = recover_switch(args.recovery,args.activation_id,service=args.service,deployment_lock=args.deployment_lock)
+            elif args.command == "kb-rollback":
+                from .activation import rollback
+                result = rollback(args.recovery, service=args.service, deployment_lock=args.deployment_lock)
             elif args.command == "kb-stage":
                 from .kb import stage
-                result = stage(args.bundle, args.kb_root, args.python, args.output)
+                result = stage(args.bundle, args.kb_root, args.python, args.output, args.base_sources)
             elif args.command == "decode":
                 result = decode_all(args.work)
             elif args.command == "build":

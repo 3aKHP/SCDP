@@ -8,6 +8,7 @@
 | [CLAUDE.md](../../CLAUDE.md) | Claude Code 接手与任务导航 |
 | [文档规范](documenting.md) | 文档读者、权威来源、写作、示例和维护要求 |
 | [术语表](../glossary.md) | 跨文档概念与详细设计入口 |
+| [运维指南](operations.md) | 定时更新、历史保留与候选切换恢复 |
 | [运行指南](running.md) | 安装、采集、恢复与离线构建 |
 | [ADR](adr/README.md) | 重要决定的背景、依据、状态与替代关系 |
 

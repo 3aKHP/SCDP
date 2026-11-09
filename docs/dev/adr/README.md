@@ -9,6 +9,7 @@
 每篇写明背景、决定、理由、代价、来源与验证入口。原始决定日期和记录日期分别表示，无法核实的日期明确标记。
 
 - [0001 — Python 运行时与文本交换契约](0001-runtime-and-contract.md)（Accepted）
+- [0002 — 历史正文、内容修订与消费切换](0002-history-and-activation.md)（Accepted）
 
 ## 状态
 

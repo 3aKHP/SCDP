@@ -131,7 +131,7 @@ class Downloader:
                             retry_delay = max(0, email.utils.parsedate_to_datetime(value).timestamp() - time.time())
                     # Reserve up to one response before reading; crash conservatively charges the
                     # reservation. Release only known unused bytes on normal exit. Concurrent
-                    # requests cannot oversubscribe the shared persistent budget.
+                    # reservations share one persistent budget; final transport buffers are charged too.
                     with self.mutex:
                         remaining = self.budget - self.status()["receivedBytes"]
                         reservation = min(self.response_limit + 1, remaining)
@@ -139,15 +139,18 @@ class Downloader:
                             raise BudgetExceeded("job_byte_budget")
                         self._charge(reservation)
                     try:
-                        for chunk in response.iter_raw(chunk_size=min(65536, reservation)):
+                        for chunk in response.iter_raw():
                             received += len(chunk)
+                            chunks.append(chunk)
+                            record["receivedBytes"] = received
                             if received > reservation:
                                 # A final transport buffer may already have arrived; account for it.
                                 with self.mutex, self.db:
                                     self.db.execute("UPDATE ledger SET received=received+? WHERE id=1", (received-reservation,))
                                 reservation = received
+                                if received > self.response_limit:
+                                    raise ValueError("response_limit")
                                 raise BudgetExceeded("job_byte_budget")
-                            chunks.append(chunk)
                             if received > self.response_limit:
                                 raise ValueError("response_limit")
                             if received >= reservation and reservation <= self.response_limit:
@@ -175,6 +178,8 @@ class Downloader:
                     self._save(key, record)
                     return record
             except BudgetExceeded:
+                if chunks:
+                    record["quarantineSha256"] = self.objects.put(b"".join(chunks))
                 record.update(state="retryable_error", error="job_byte_budget", attempts=attempt-1)
                 self._save(key, record)
                 raise

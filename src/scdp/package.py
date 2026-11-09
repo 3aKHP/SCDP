@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 import jsonschema
 from .contracts import schema
-from .core import atomic_write, canonical, safe_path, sha, write_json
+from .core import atomic_write, canonical, job_lock, safe_path, sha, write_json
 
 ALLOWED_SUFFIXES={".json", ".jsonl", ".md", ".yaml", ".txt"}
 
@@ -112,7 +112,7 @@ def publish_plan(archive, destination):
             "destinationKind":"filesystem","visibility":"private","filename":validate["snapshotId"]+".tar.gz"}
 
 
-def publish(archive, destination):
+def _publish_unlocked(archive, destination):
     # Filesystem backend: web/object-store serving and consumer activation are separate operations.
     plan=publish_plan(archive,destination)
     destination=Path(destination)
@@ -136,3 +136,8 @@ def publish(archive, destination):
             write_json(destination/"previous.json",previous)
     write_json(current,plan)
     return plan
+
+
+def publish(archive, destination):
+    with job_lock(destination):
+        return _publish_unlocked(archive,destination)

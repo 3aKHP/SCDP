@@ -79,3 +79,15 @@ def test_semantic_check_rejects_rehashed_body_omission(tmp_path):
     write_json(output/'snapshot.json',manifest)
     with pytest.raises(ValueError,match='body_occurrence_set_mismatch'):
         validate_tree(output)
+
+
+def test_reading_line_endings_preserve_original_evidence():
+    from scdp.story import project
+    from scdp.build import render
+    from scdp.validation import check_occurrences
+    frames=[{'text':'Fiction first\r\nFiction second\rFiction third'}]
+    story=project('demo/fiction',frames,'0'*64,'0'*64)
+    document=render(story,[])
+    assert '\r' not in document
+    assert story['frames'][0]['text']==frames[0]['text']
+    assert check_occurrences(story,document)[0]==1

@@ -1,0 +1,11 @@
+[Unit]
+Description=Check SCDP sources every ten minutes
+
+[Timer]
+OnCalendar=*:0/10
+AccuracySec=10s
+Persistent=true
+Unit=scdp-cycle.service
+
+[Install]
+WantedBy=timers.target

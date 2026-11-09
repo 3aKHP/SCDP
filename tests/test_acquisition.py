@@ -99,12 +99,12 @@ def test_persistent_budget(tmp_path):
     d = downloader(tmp_path, lambda r: response(body), budget=10)
     with pytest.raises(BudgetExceeded):
         d.fetch("story.json", "https://example.test/one", validate_story)
-    assert d.status()["receivedBytes"] == 10
+    assert d.status()["receivedBytes"] == len(body)
     d.close()
     d = downloader(tmp_path, lambda r: response(body), budget=10)
     with pytest.raises(BudgetExceeded):
         d.fetch("story.json", "https://example.test/one", validate_story)
-    assert d.status()["receivedBytes"] == 10
+    assert d.status()["receivedBytes"] == len(body)
     d.close()
 
 
@@ -197,4 +197,16 @@ def test_interrupted_body_is_charged_and_recoverable(tmp_path):
     assert result['state']=='available'
     assert d.status()['requests']==2
     assert d.status()['receivedBytes']==65536+len(body)
+    d.close()
+
+
+def test_short_interrupted_body_is_also_charged(tmp_path):
+    class ShortInterrupted(httpx.SyncByteStream):
+        def __iter__(self):
+            yield b"partial"
+            raise httpx.ReadError("synthetic short disconnect")
+    d=downloader(tmp_path,lambda _:httpx.Response(200,stream=ShortInterrupted()),attempts=1)
+    with pytest.raises(AcquisitionError):
+        d.fetch("story.json","https://example.test/short",validate_story)
+    assert d.status()["receivedBytes"]==7
     d.close()

@@ -8,25 +8,19 @@ from . import __version__
 from .core import Objects, atomic_write, canonical, now, safe_path, sha, write_json
 from .official import classify, selected, validate_story, decode as official_decode
 from .pipeline import load_observation
-from .story import project, verify_occurrences
+from .story import READABLE, project, verify_occurrences
 from .translation import align, read_archive, read_fallbacks
 from .catalog import Catalog
+from .history import inventory_history, story_records, content_fingerprint
 from .package import validate_tree
 
 COLLECTION="games/shinycolors/story-bilingual"
 
 
-def decoded_stories(root, observation):
+def decoded_stories(root, observation, chosen=None):
     objects=Objects(Path(root)/"objects")
-    for path in sorted(observation["resources"]):
-        if not selected(path):
-            continue
-        checkpoint=Path(root)/"fetch"/observation["observationId"]/(sha(path.encode())+".json")
-        if not checkpoint.exists():
-            raise ValueError("missing_fetch_result")
-        record=json.loads(checkpoint.read_bytes())
-        if record.get("state")!="available" or record.get("logicalPath")!=path or record.get("sourceVersion")!=observation["resources"][path] or record.get("observationId")!=observation["observationId"]:
-            raise ValueError("unavailable_story")
+    chosen=story_records(root,observation) if chosen is None else chosen
+    for path,record in sorted(chosen.items()):
         raw=objects.get(record["rawSha256"])
         data=objects.get(record["decodedSha256"])
         if official_decode(path,raw)!=data:
@@ -56,6 +50,7 @@ def decode_all(root):
 
 def fence(text):
     import re
+    text = text.replace("\r\n", "\n").replace("\r", "\n")
     longest=max((len(m.group()) for m in re.finditer(r"`+",text)),default=0)
     delimiter="`"*max(3,longest+1)
     return delimiter+"text\n"+text+"\n"+delimiter
@@ -90,18 +85,28 @@ def render(story, translations):
     return "\n".join(lines)+"\n"
 
 
+def input_identity(observation, history, chosen, catalog, translations=None, translation_identity="absent"):
+    translation_sha=sha(Path(translations).read_bytes()) if translations else None
+    code_sha=sha(canonical({p.name:sha(p.read_bytes()) for p in sorted(Path(__file__).parent.glob("*.py"))}))
+    inputs={"observationId":observation["observationId"],"translationIdentity":translation_identity,
+            "translationArchiveSha256":translation_sha,"metadataInputs":catalog.inputs,"storyContentFingerprint":content_fingerprint(chosen),"inventoryHistoryFingerprint":sha(canonical(history)),"codeSha256":code_sha,"schemaSha256":sha((Path(__file__).parent/"contract.schema.json").read_bytes()),"toolVersion":__version__,
+            }
+    return inputs
+
+
 def build(root, output, *, translations=None, translation_identity="absent", metadata=None, sequence=1, revision=0):
     root,output=Path(root),Path(output)
     observation=load_observation(root)
     translation_sha=sha(Path(translations).read_bytes()) if translations else None
-    catalog=Catalog(observation["resources"])
+    history=inventory_history(root,observation)
+    chosen=story_records(root,observation,history)
+    all_resources={path:state["sourceVersion"] for path,state in history.items()}
+    catalog=Catalog(all_resources)
     catalog.load(metadata)
     fallbacks=read_fallbacks(translations,translation_identity) if translations else {}
     source_records,orphans=read_archive(translations,translation_identity) if translations else ({},[])
-    code_sha=sha(canonical({p.name:sha(p.read_bytes()) for p in sorted(Path(__file__).parent.glob("*.py"))}))
-    inputs={"observationId":observation["observationId"],"translationIdentity":translation_identity,
-            "translationArchiveSha256":translation_sha,"metadataInputs":catalog.inputs,"codeSha256":code_sha,"schemaSha256":sha((Path(__file__).parent/"contract.schema.json").read_bytes()),"toolVersion":__version__,
-            "releaseSequence":sequence,"publicationRevision":revision}
+    inputs=input_identity(observation,history,chosen,catalog,translations,translation_identity)
+    inputs.update(releaseSequence=sequence,publicationRevision=revision)
     snapshot_id=sha(canonical(inputs))
     identity_path=root/"build-identities"/(snapshot_id+".json")
     if identity_path.exists():
@@ -122,11 +127,15 @@ def build(root, output, *, translations=None, translation_identity="absent", met
         (collection/"docs").mkdir(parents=True)
         (collection/"references").mkdir()
         write_json(stage/"inputs.json",inputs)
+        atomic_write(stage/"schema.json",(Path(__file__).parent/"contract.schema.json").read_bytes())
         atomic_write(collection/"collection.yaml",(f"id: {COLLECTION}\ntitle: 闪耀色彩剧情（日中）\nlanguage: ja\nvisibility: private\nstatus: active\ndefault_tags: [shinycolors, story, bilingual]\nsource:\n  kind: scdp\n  snapshot: {snapshot_id}\nindex:\n  include:\n    - docs/**/*.md\n    - references/**/*.md\n  exclude:\n    - attachments/**\n").encode())
         coverage=[];translated=Counter();control_keys=Counter();frame_keys=Counter(); fetched={}
-        metadata_coverage=Counter();media_coverage=Counter()
+        metadata_coverage=Counter();media_coverage=Counter();body_occurrences=readable_stories=unknown_strings=0
         with (stage/"stories.jsonl").open("wb") as story_out,(stage/"translations.jsonl").open("wb") as translation_out, (stage/"relations.jsonl").open("wb") as relation_out:
-            for record,story,decoded in decoded_stories(root,observation):
+            for record,story,decoded in decoded_stories(root,observation,chosen):
+                body_occurrences+=sum(o["field"] in READABLE for o in story["occurrences"])
+                unknown_strings+=sum(o["field"] not in READABLE for o in story["occurrences"])
+                readable_stories+=any(o["field"] in READABLE and o["text"].strip() for o in story["occurrences"])
                 sources=source_records.get(story["scriptId"],[])
                 catalog.enrich(story,sources)
                 metadata_coverage.update([story["metadata"]["titleStatus"]])
@@ -170,18 +179,20 @@ def build(root, output, *, translations=None, translation_identity="absent", met
             "sourceStatus":"third-party snapshots; official title and unlock completeness unproven"})
         write_json(stage/"sources.json",{"official":{"observationId":observation["observationId"],"manifestSha256":observation["manifestSha256"],
             "inventorySha256":observation["inventorySha256"],"shards":observation["shards"]},
+            "historicalObservationIds":sorted({record["observationId"] for record in chosen.values()}-{observation["observationId"]}),
             "translation":{"identity":translation_identity,"archiveSha256":translation_sha,"license":"no license file in pinned source; private distribution"},
             "metadata":catalog.inputs})
         write_json(collection/"import-manifest.json",{"snapshotId":snapshot_id,"documents":coverage})
         index="# 剧情目录\n\n"+"\n".join(f"- [{r['scriptId']}]({r['path']})" for r in coverage)+"\n"
         atomic_write(collection/"README.md",index.encode())
-        write_json(stage/"coverage.json",{"stories":len(coverage),"occurrences":sum(r["occurrences"] for r in coverage),
+        write_json(stage/"coverage.json",{"stories":len(coverage),"occurrences":sum(r["occurrences"] for r in coverage),"bodyOccurrences":body_occurrences,"readableStories":readable_stories,"emptyStories":len(coverage)-readable_stories,"unknownStringOccurrences":unknown_strings,
                     "translations":dict(translated),"frameKeys":dict(frame_keys),"controlKeys":dict(control_keys),
                     "historicalSeedsAbsent":sorted(set(source_records)-{r["scriptId"] for r in coverage}),
                     "translationOrphanFiles":[r["path"] for r in orphans],
                     "duplicateTranslationIds":{k:len(v) for k,v in source_records.items() if len(v)>1}})
         with (stage/"assets.jsonl").open("wb") as assets,(stage/"versions.jsonl").open("wb") as versions:
-            for path,counter in sorted(observation["resources"].items()):
+            for path,state in sorted(history.items()):
+                counter=state["sourceVersion"]
                 aid="enza:"+path
                 assets.write(canonical({"assetId":aid,"logicalPath":path,"kind":classify(path),"dependencies":[],"extensions":{}})+b"\n")
                 record=fetched.get(path)
@@ -190,10 +201,10 @@ def build(root, output, *, translations=None, translation_identity="absent", met
                     reps=[{"representationId":"sha256:"+record["decodedSha256"],"role":"decoded","sha256":record["decodedSha256"],
                            "size":record["decodedBytes"],"mediaType":"application/json","locator":"originals/"+path.removeprefix("json/"),
                            "inputs":[record["rawSha256"]],"tool":"official-v1"}]
-                versions.write(canonical({"assetId":aid,"observationId":observation["observationId"],"sourceVersion":counter,
-                    "firstSeen":observation["startedAt"],"lastSeen":observation["endedAt"],"presence":"current",
+                versions.write(canonical({"assetId":aid,"observationId":record["observationId"] if record else state["observationId"],"sourceVersion":record["sourceVersion"] if record else counter,
+                    "firstSeen":state["firstSeen"],"lastSeen":state["lastSeen"],"presence":state["presence"],
                     "availability":"available" if record else "inventoried","representations":reps,
-                    "provenance":{"source":"official","identity":observation["observationId"],"evidence":[observation["inventorySha256"]]}})+b"\n")
+                    "provenance":{"source":"official","identity":record["observationId"] if record else state["observationId"],"evidence":["inventory-observation:"+state["observationId"]]}})+b"\n")
         entries=[]
         for path in sorted(stage.rglob("*")):
             if path.is_file():
@@ -202,9 +213,9 @@ def build(root, output, *, translations=None, translation_identity="absent", met
         manifest={"schemaVersion":"1.0.0","snapshotId":snapshot_id,"releaseSequence":sequence,"publicationRevision":revision,
                   "observedAt":observation["endedAt"],"builtAt":identity["builtAt"],"source":{"observationId":observation["observationId"],"version":observation["sourceVersion"],"inventorySha256":observation["inventorySha256"],"inventoryCount":len(observation["resources"]),"consistency":"observation-window"},
                   "inputs":inputs,"capabilities":["story.original-json","story.occurrences","story.translation","catalog.partial","asset.inventory"],
-                  "scope":{"selector":"json/**/*.json except json/support_skills/**","selected":observation["selected"],"stories":len(coverage),"media":"inventory-only","visibility":"private","historicalCompleteness":"unproven"},
+                  "scope":{"selector":"json/**/*.json except json/support_skills/**","selected":observation["selected"],"stories":len(coverage),"historicalStories":len(chosen)-observation["selected"],"historicalCatalogOnly":[p for p in history if selected(p) and p not in chosen],"archiveInventoryCount":len(history),"media":"inventory-only","visibility":"private","historicalCompleteness":"unproven"},
                   "baseline":None,"predecessor":None,"validation":{"unresolvedMetadata":True,"unknownControl":"preserved"},"files":entries}
-        if len(coverage)!=observation["selected"]: raise ValueError("build_scope_mismatch")
+        if len(coverage)!=len(chosen): raise ValueError("build_scope_mismatch")
         write_json(stage/"snapshot.json",manifest)
         result=validate_tree(stage)
         os.replace(stage,output)

@@ -4,6 +4,7 @@ import os
 import shutil
 import sqlite3
 import subprocess
+import uuid
 from pathlib import Path
 from .build import COLLECTION
 from .core import canonical, sha, write_json
@@ -44,21 +45,58 @@ def reconcile(collection, sources, index):
             "installedFiles": len(actual_files), "fileDigestsMatch": True, "indexedNonemptyLinesCovered": True}
 
 
-def stage(bundle, kb_root, python, output):
+def source_manifest(sources):
+    sources = Path(sources)
+    result = {}
+    for path in sorted(sources.rglob("*")):
+        relative = path.relative_to(sources)
+        if relative.parts[0].startswith(".kbctl-"):
+            continue
+        if path.is_symlink():
+            raise ValueError("kb_source_symlink")
+        if path.is_file():
+            result[relative.as_posix()] = sha(path.read_bytes())
+    return result
+
+
+def stage(bundle, kb_root, python, output, base_sources=None):
     bundle, kb_root, output = Path(bundle).resolve(), Path(kb_root).resolve(), Path(output).resolve()
     verified = validate_tree(bundle)
+    component = sha(canonical({p.name:sha(p.read_bytes()) for p in sorted(kb_root.glob("*.py"))}))
+    baseline = source_manifest(base_sources) if base_sources else {}
+    identity = {"snapshotId":verified["snapshotId"], "componentSha256":component,
+                "baselineFingerprint":sha(canonical(baseline))}
     if output.exists():
-        raise ValueError("kb_stage_target_exists")
+        ownership = output/"scdp-stage.json"
+        if not ownership.exists() or json.loads(ownership.read_bytes()) != identity:
+            raise ValueError("kb_stage_target_exists_or_baseline_changed")
+        receipt = output/"reconciliation.json"
+        if receipt.exists():
+            existing = json.loads(receipt.read_bytes())
+            checked = reconcile(bundle/"collection",output/"sources",output/"index.sqlite3")
+            if (sha(canonical(source_manifest(output/"sources"))) != existing["candidateTreeFingerprint"] or
+                    sha((output/"index.sqlite3").read_bytes()) != existing["indexSha256"] or
+                    sha((output/"collection.tar.gz").read_bytes()) != existing["nativePackageSha256"]):
+                raise ValueError("kb_completed_stage_changed")
+            if any(existing[key] != value for key,value in checked.items()):
+                raise ValueError("kb_completed_stage_changed")
+            return existing
+        # A previously interrupted owned candidate is kept for diagnosis. Retrying
+        # builds a new isolated candidate; no active source or index is modified.
+        output.rename(output.with_name(output.name+".interrupted-"+uuid.uuid4().hex[:12]))
     output.mkdir(parents=True)
+    write_json(output/"scdp-stage.json", identity)
     receipts = output/"receipts"
     receipts.mkdir()
+    write_json(receipts/"baseline.json",baseline)
     source = output/"candidate/collections"/COLLECTION
     source.parent.mkdir(parents=True)
     shutil.copytree(bundle/"collection", source)
+    if base_sources:
+        shutil.copytree(base_sources,output/"sources",ignore=shutil.ignore_patterns(".kbctl-backups",".kbctl-installing"))
 
     def run(name, *arguments):
         process = subprocess.run([str(python), str(kb_root/"kbctl.py"), *arguments, "--json"], capture_output=True, text=True, env={**os.environ, "KB_TOKENS_FILE": str(output/"unused-tokens")})
-        # Native receipts may contain deployment paths and belong only in the local stage.
         write_json(receipts/(name+".json"), {"exitCode": process.returncode, "stdout": process.stdout, "stderr": process.stderr})
         if process.returncode:
             raise ValueError("kb_native_command_failed:"+name)
@@ -66,11 +104,21 @@ def stage(bundle, kb_root, python, output):
     native = output/"collection.tar.gz"
     run("validate", "validate-collection", "--sources-root", str(output/"candidate"), "--collection-id", COLLECTION)
     run("pack", "pack-collection", "--sources-root", str(output/"candidate"), "--collection-id", COLLECTION, "--output", str(native))
-    run("install", "install-package", "--package", str(native), "--sources-root", str(output/"sources"))
-    run("reinstall", "install-package", "--package", str(native), "--sources-root", str(output/"sources"), "--replace")
+    replacing = (output/"sources/collections"/COLLECTION).exists()
+    run("install", "install-package", "--package", str(native), "--sources-root", str(output/"sources"), *(["--replace"] if replacing else []))
+    if not replacing:
+        run("reinstall", "install-package", "--package", str(native), "--sources-root", str(output/"sources"), "--replace")
     run("index", "rebuild-index", "--sources-root", str(output/"sources"), "--index", str(output/"index.sqlite3"))
     result = reconcile(bundle/"collection", output/"sources", output/"index.sqlite3")
-    result.update(componentSha256=sha(canonical({p.name:sha(p.read_bytes()) for p in sorted(kb_root.glob("*.py"))})), nativePackageSha256=sha(native.read_bytes()), nativePackageBytes=native.stat().st_size,
-                  repeatedInstall=True, bundleVerified=verified["snapshotId"])
+    current_files = source_manifest(output/"sources")
+    prefix = "collections/"+COLLECTION+"/"
+    others_before = {p:d for p,d in baseline.items() if not p.startswith(prefix)}
+    others_after = {p:d for p,d in current_files.items() if not p.startswith(prefix)}
+    if others_before != others_after or (base_sources and baseline != source_manifest(base_sources)):
+        raise ValueError("kb_unrelated_collection_or_baseline_changed")
+    result.update(componentSha256=component, nativePackageSha256=sha(native.read_bytes()), nativePackageBytes=native.stat().st_size,
+                  repeatedInstall=not replacing, replacedExisting=replacing, bundleVerified=verified["snapshotId"],
+                  baselineFingerprint=identity["baselineFingerprint"], indexSha256=sha((output/"index.sqlite3").read_bytes()), candidateTreeFingerprint=sha(canonical(current_files)),
+                  unaffectedFiles=len(others_before), unaffectedFileDigestsMatch=True)
     write_json(output/"reconciliation.json", result)
     return result

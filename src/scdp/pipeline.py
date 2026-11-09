@@ -35,14 +35,14 @@ def validate_shard(data):
     return value
 
 
-def discover(downloader, base=ASSETS_URL, *, audit=False):
+def discover(downloader, base=ASSETS_URL, *, audit=False, audit_shards=()):
     started = now()
     main = downloader.fetch("asset-map.json", manifest_url(base), validate_manifest, revalidate=True)
     manifest = validate_manifest(downloader.objects.get(main["decodedSha256"]))
     resources, shards = {}, []
     for group in manifest["chunks"]:
         for name, version in group.items():
-            record = downloader.fetch(name, asset_url(name, base)+f"?v={version}", validate_shard, revalidate=audit)
+            record = downloader.fetch(name, asset_url(name, base)+f"?v={version}", validate_shard, revalidate=audit or name in audit_shards)
             shard = validate_shard(downloader.objects.get(record["decodedSha256"]))
             for path, counter in shard.items():
                 if path in resources:
@@ -101,7 +101,8 @@ def fetch_stories(downloader, observation, *, workers=2, limit=None, sample=Fals
             result = {**result, "sourceVersion": version, "observationId": observation["observationId"]}
         except Exception as exc:
             result = {"logicalPath": path, "state": "failed", "error": type(exc).__name__, "sourceVersion": version}
-        write_json(output / (sha(path.encode())+".json"), result)
+        from .history import save_fetch_record
+        save_fetch_record(downloader.root, observation["observationId"], result)
         return result
 
     # Bounded queue avoids scheduling thousands of operations after a budget failure.

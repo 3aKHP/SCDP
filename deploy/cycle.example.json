@@ -1,0 +1,19 @@
+{
+  "work": "/data/scdp/work",
+  "destination": "/data/scdp/releases",
+  "budgetBytes": 1073741824,
+  "rate": 1,
+  "workers": 2,
+  "rollingChecks": 1,
+  "shardChecks": 1,
+  "translation": {
+    "path": "/data/scdp/inputs/translations.tar.gz",
+    "identity": "REPLACE_WITH_VERIFIED_COMMIT",
+    "sha256": "REPLACE_WITH_VERIFIED_SHA256",
+    "repository": "ShinyGroup/SCTranslationData",
+    "budgetBytes": 268435456
+  },
+  "metadata": "/data/scdp/inputs/metadata",
+  "consumerCommand": ["/opt/scdp/venv/bin/python", "/etc/scdp/consume.py", "{bundle}", "{archive}", "{snapshotId}"],
+  "consumerTimeout": 3600
+}
