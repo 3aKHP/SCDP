@@ -16,3 +16,9 @@
 - 缺译、未知标题与归属允许发布但须报告；正文遗漏、获取失败、错误摘要和必需依赖缺失阻止激活。
 
 合成实例见 [黄金样例](../tests/fixtures/golden.json)。包布局及正式发布入口将在 E2–E4 完成后固化。
+
+标准包按记录类型保存 assets.jsonl、versions.jsonl、stories.jsonl、translations.jsonl、entities.jsonl、relations.jsonl。
+每行按本 schema 的同名 `$defs` 校验；snapshot.json 使用 Snapshot 定义并列出其他包成员摘要。
+Story 可附带 graph、unknownFrameFields 和 metadata。图包含原始帧节点、选择组、显式跳转、
+循环观察及未证明可达节点；未知指令的边声明 unresolved。原始帧始终保留。
+来源独立写入 sources.json，字段缺口及冲突写入 metadata-report.json，范围与译文状态写入 coverage.json。

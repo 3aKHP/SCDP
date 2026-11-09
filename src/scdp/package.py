@@ -1,5 +1,6 @@
 """Text-only immutable packages, verified extraction and filesystem publication."""
 import json
+import gzip
 import os
 import shutil
 import tarfile
@@ -35,7 +36,9 @@ def validate_tree(root):
         data.decode("utf-8")
     if manifest["baseline"] is not None:
         raise ValueError("unsupported_baseline")
-    return {"snapshotId":manifest["snapshotId"],"files":len(expected),"bytes":sum(e["size"] for e in expected.values())}
+    from .validation import validate_semantics
+    semantics = validate_semantics(root, manifest)
+    return {"snapshotId":manifest["snapshotId"],"files":len(expected),"bytes":sum(e["size"] for e in expected.values()),"semantics":semantics}
 
 
 def pack(root, output):
@@ -46,13 +49,14 @@ def pack(root, output):
     os.close(fd)
     try:
         # gzip mtime is intentionally outside semantic identity; member metadata is fixed.
-        with tarfile.open(temp,"w:gz") as archive:
+        with open(temp, "wb") as compressed, gzip.GzipFile(filename="", mode="wb", fileobj=compressed, mtime=0) as gzip_stream, tarfile.open(fileobj=gzip_stream, mode="w") as archive:
             for path in sorted(root.rglob("*")):
                 if path.is_file():
                     info=archive.gettarinfo(str(path),arcname=path.relative_to(root).as_posix())
                     info.uid=info.gid=info.mtime=0
                     info.uname=info.gname=""
                     info.mode=0o644
+                    info.pax_headers={}
                     with path.open("rb") as stream:
                         archive.addfile(info,stream)
         data=Path(temp).read_bytes()

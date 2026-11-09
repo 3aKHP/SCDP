@@ -33,7 +33,7 @@ def test_required_dependency_and_schema():
 
 def test_occurrences_not_game_ids_or_text():
     story=golden()["stories"][0]
-    assert verify_occurrences(story)==6
+    assert verify_occurrences(story)==7
     repeated=[o for o in story["occurrences"] if o["text"]=="また明日。"]
     assert len(repeated)==2 and repeated[0]["pointer"]!=repeated[1]["pointer"]
     assert any(c["status"]=="unresolved" for c in story["controls"])
@@ -52,3 +52,18 @@ def test_multi_page_dependency_and_mime():
     bundle['versions'][5]['representations']=[]
     with pytest.raises(ValueError,match='required_dependency'):
         validate(bundle)
+
+
+def test_unknown_field_text_and_graph_are_preserved():
+    frames=[{'select':'Left','nextLabel':'left'},{'select':'Right','nextLabel':'right'},
+            {'label':'left','text':'Fiction left','nextLabel':'end'},
+            {'label':'right','newNestedCommand':{'text':'Unknown fictional dialogue','value':'unknown argument'}},
+            {'label':'end','nextLabel':'end'}]
+    parsed=project('demo/graph',frames,'0'*64,'0'*64)
+    assert parsed['graph']['entries']==[0,1]
+    assert parsed['graph']['hasResolvedCycle']
+    assert parsed['unknownFrameFields']==['newNestedCommand']
+    assert any(o['pointer']=='/3/newNestedCommand/text' for o in parsed['occurrences'])
+    assert any(o['text']=='unknown argument' for o in parsed['occurrences'])
+    assert any(e['from']==3 and e['status']=='unresolved' for e in parsed['graph']['edges'])
+    assert parsed['frames']==frames

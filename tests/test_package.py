@@ -34,6 +34,9 @@ def test_full_offline_cycle(tmp_path):
     archive=tmp_path/"bundle.tar.gz"
     packed=pack(output,archive)
     assert packed==pack(output,archive)
+    second=tmp_path/"bundle-second"
+    assert build(root,second)==built
+    assert pack(second,tmp_path/"second.tar.gz")["sha256"]==packed["sha256"]
     assert unpack(archive,tmp_path/"installed")==built
     result=publish(archive,tmp_path/"published")
     assert publish(archive,tmp_path/"published")==result
@@ -60,3 +63,19 @@ def test_archive_link_and_capacity(tmp_path):
     with tarfile.open(archive,"w:gz") as t:
         item=tarfile.TarInfo("large.md");item.size=100;t.addfile(item,io.BytesIO(b"x"*100))
     with pytest.raises(ValueError,match="capacity"):unpack(archive,tmp_path/"out",max_bytes=10)
+
+
+def test_semantic_check_rejects_rehashed_body_omission(tmp_path):
+    from scdp.core import sha,write_json
+    root=tmp_path/'work';fixture_work(root)
+    output=tmp_path/'bundle';build(root,output)
+    path=output/'stories.jsonl'
+    story=json.loads(path.read_bytes());story['occurrences'].pop()
+    path.write_bytes(canonical(story)+b'\n')
+    manifest=json.loads((output/'snapshot.json').read_bytes())
+    for entry in manifest['files']:
+        if entry['path']=='stories.jsonl':
+            entry.update(size=path.stat().st_size,sha256=sha(path.read_bytes()))
+    write_json(output/'snapshot.json',manifest)
+    with pytest.raises(ValueError,match='body_occurrence_set_mismatch'):
+        validate_tree(output)

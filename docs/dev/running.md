@@ -64,3 +64,41 @@ uv run scdp publish dist/candidate.tar.gz --destination data/releases
 发布器校验包、写入不可变对象、读回摘要，再更新 latest.json；上一清单保留为 previous.json。
 这是文件存储后端。远程可下载服务、调度、正式消费者安装和实际 MCP 验收由后续上线任务完成。
 源包发布不代表消费者激活。现阶段不得将本地发布测试报告为 G10 通过。
+
+## 元数据与完整校验
+
+`build --metadata PATH` 可读取固定来源目录的 `album<number>.json` 与 `card-*.json`。
+输入为含 `url` 和 `data` 的公开来源响应包装；每个输入记录 SHA-256。
+适配器仅投影游戏角色、卡片、衣装、剧情标题与关系字段，不复制应用用户状态。
+编号到剧情命名空间的匹配和说话人名称匹配标为 inferred，冲突与未匹配记录进入 metadata-report.json。
+
+译文优先使用同篇 CSV 的原文与发生上下文；重复句无法确定位置时保留候选并标为 ambiguous。
+`data/comm-story.csv` 提供独立的通用剧情词条回退，文档明确标注 fallback。
+原文修订后按新原文摘要和上下文重新对齐。标题候选与完整历史缺口独立报告。
+
+`validate` 同时核对文件摘要和全量记录 schema，重算目录指纹及选择集，核对原件帧、
+每处正文的文档位置、控制证据、跳转目标、译文上下文、媒体目录引用和实体关系。
+所有未识别帧字段保留原值，其字符串进入文档证据并标注 unresolved。
+包内原件为解码后的精确 JSON；传输实体继续保留在采集对象库。
+
+## MCP-KB 隔离接入
+
+先配置目标组件根目录与其 Python 环境，通过原生 CLI 创建隔离 candidate、安装源和索引：
+
+```bash
+uv run scdp kb-stage dist/candidate --kb-root "$SCDP_KB_ROOT" --python "$SCDP_KB_PYTHON" --output work/kb-stage
+```
+
+该命令执行校验、原生 collection 打包、安装、同包重装和索引重建，并逐文档对拍安装摘要、
+索引记录与非空正文行覆盖。目标目录必须不存在。原生回执含本机路径，留在隔离工作目录。
+
+通过 MCP HTTP 的读取验收使用安装了 MCP Python SDK 的环境：
+
+```bash
+"$SCDP_KB_PYTHON" -m scdp.kb_probe --url "$SCDP_KB_URL" --token-file "$SCDP_KB_TOKEN_FILE" --bundle dist/candidate --report work/kb-protocol-report.json
+```
+
+此 Python 环境还需安装 SCDP。凭证只在调用时注入，不写入报告。
+校验器对全部正文文档分页读取并与源文件逐行比较，再检查各类别的原文、已有中文、检索、
+chunk 读回、outline 和 grep。报告记录覆盖与摘要，不复制正文及服务地址。
+这条命令是实际协议验证；隔离合成数据的通过不能替代全量真实资料和正式目标验收。

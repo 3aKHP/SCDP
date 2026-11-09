@@ -27,6 +27,7 @@ def main():
     builder = sub.add_parser("build", help="build the complete text collection offline")
     builder.add_argument("--output", required=True)
     builder.add_argument("--translations")
+    builder.add_argument("--metadata", help="directory of pinned public metadata responses")
     builder.add_argument("--translation-identity", default="absent")
     builder.add_argument("--sequence", type=int, default=1)
     builder.add_argument("--revision", type=int, default=0)
@@ -39,6 +40,11 @@ def main():
         p = sub.add_parser(name, help="plan or publish to a private filesystem target")
         p.add_argument("archive")
         p.add_argument("--destination", required=True)
+    kb = sub.add_parser("kb-stage", help="validate and install through MCP-KB native CLI in isolation")
+    kb.add_argument("bundle")
+    kb.add_argument("--kb-root", required=True)
+    kb.add_argument("--python", required=True)
+    kb.add_argument("--output", required=True)
     args = parser.parse_args()
     with job_lock(args.work):
         downloader = Downloader(args.work, budget=args.budget, rate=args.rate)
@@ -48,10 +54,13 @@ def main():
                 result = {k: v for k, v in result.items() if k not in ("resources", "shards", "manifest")}
             elif args.command in ("fetch", "resume"):
                 result = fetch_stories(downloader, load_observation(args.work), workers=args.workers, limit=args.limit, sample=args.sample)
+            elif args.command == "kb-stage":
+                from .kb import stage
+                result = stage(args.bundle, args.kb_root, args.python, args.output)
             elif args.command == "decode":
                 result = decode_all(args.work)
             elif args.command == "build":
-                result = build(args.work, args.output, translations=args.translations, translation_identity=args.translation_identity, sequence=args.sequence, revision=args.revision)
+                result = build(args.work, args.output, translations=args.translations, translation_identity=args.translation_identity, metadata=args.metadata, sequence=args.sequence, revision=args.revision)
             elif args.command == "validate":
                 result = validate_tree(args.directory)
             elif args.command == "package":

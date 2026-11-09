@@ -20,7 +20,7 @@ def test_repeated_occurrences_and_revision():
     changed=story(["A","revised","B","same","C"])
     assert align(changed,[src])[1]["status"]=="missing"
     ambiguous=story(["same","same","same"])
-    assert all(r["status"]=="missing" for r in align(ambiguous,[source(["same"],["一"])]))
+    assert all(r["status"]=="ambiguous" for r in align(ambiguous,[source(["same"],["一"])]))
 
 
 def test_translation_only_and_conflicts():
@@ -29,3 +29,12 @@ def test_translation_only_and_conflicts():
     assert align(original,[source(["A"],["乙"])])[0]["text"]=="乙"
     assert align(original,[source(["A"],["甲"]),source(["A"],["乙"])])[0]["status"]=="ambiguous"
     assert align(original,[source(["A"],[""])])[0]["status"]=="missing"
+
+
+def test_fallback_keeps_occurrences_and_ambiguity():
+    original=story(['same','same'])
+    fallback={'same':[{'text':'一般译文','file':'data/comm-story.csv','line':2,'identity':'synthetic','sha256':'0'*64,'rule':'fallback','accepted':True}]}
+    rows=align(original,[],fallback)
+    assert [r['kind'] for r in rows]==['fallback','fallback']
+    assert rows[0]['pointer']!=rows[1]['pointer']
+    assert all(r['status']=='ambiguous' for r in align(original,[source(['same'],['上下文不明'])],fallback))
