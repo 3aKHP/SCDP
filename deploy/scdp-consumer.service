@@ -1,0 +1,17 @@
+[Unit]
+Description=Pull verified SCDP releases and activate the consumer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=@RUN_USER@
+WorkingDirectory=/data/scdp
+UMask=0077
+PrivateTmp=true
+ExecStart=/opt/scdp/venv/bin/python -m scdp.consumer --config /etc/scdp/consumer.json
+TimeoutStartSec=10800
+KillSignal=SIGINT
+KillMode=control-group
+# Bound a native index or temporary database file; align with maxIndexBytes.
+LimitFSIZE=2147483648

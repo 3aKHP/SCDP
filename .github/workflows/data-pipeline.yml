@@ -1,0 +1,37 @@
+name: Data pipeline
+on:
+  schedule:
+    - cron: '17 */2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: scdp-production-data
+  cancel-in-progress: false
+jobs:
+  produce:
+    if: github.ref == 'refs/heads/main' && vars.SCDP_PRODUCER_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: '0.11.28'
+      - run: uv sync --locked
+      - name: Produce and persist acquisition state
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SCDP_REPOSITORY: ${{ github.repository }}
+          SCDP_COMMIT: ${{ github.sha }}
+        run: >-
+          uv run python -m scdp.runner run
+          --repository "$SCDP_REPOSITORY" --commit "$SCDP_COMMIT"
+          --directory "$RUNNER_TEMP/scdp-producer"

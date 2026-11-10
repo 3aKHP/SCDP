@@ -8,6 +8,7 @@
 | 自行获取、恢复下载和构建 | [采集与构建](guides/collect.md) |
 | 编写读取程序或接入应用 | [下游集成](guides/integrations.md) |
 | 定时更新、消费切换与恢复 | [运维](guides/operations.md) |
+| GitHub 托管生产与消费空间规划 | [托管调度](guides/hosted-pipeline.md) |
 
 ## 参考与维护
 

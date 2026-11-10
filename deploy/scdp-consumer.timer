@@ -1,0 +1,11 @@
+[Unit]
+Description=Check published SCDP data every two hours
+
+[Timer]
+OnCalendar=*-*-* 00/2:47:00
+AccuracySec=60s
+Persistent=true
+Unit=scdp-consumer.service
+
+[Install]
+WantedBy=timers.target

@@ -2,6 +2,8 @@
 
 本页描述已实现的运维接口。当前能力与限制见 [STATUS](../../STATUS.md)。
 
+托管生产、检查点恢复和消费存储保留策略见 [GitHub 生产调度](hosted-pipeline.md)。
+
 ## 一次更新
 
 `scdp cycle --config CONFIG` 使用工作目录互斥锁和累计账本。每轮条件读取主清单，复用经校验的分片与正文，

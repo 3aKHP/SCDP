@@ -23,3 +23,6 @@
 成功通常输出 JSON。获取结果 `complete: false` 时退出码为 2，其他异常非零退出。`fetch --limit 5` 是局部试跑，不能视为完整构建输入；`resume` 不带限制时处理全部选择集。
 
 `cycle` 的预算与工作目录来自配置文件，不继承全局同名选项。激活、回退和恢复会操作消费者目录及服务，使用前按[运维指南](../guides/operations.md)准备隔离候选和恢复信息。
+
+托管生产入口为 `python -m scdp.runner`，子命令 `export`、`initialize`、`run`、`recover` 各有 `--help`。
+服务器拉取入口为 `python -m scdp.consumer --config CONFIG`。状态初始化、权限和恢复步骤见[托管调度](../guides/hosted-pipeline.md)。

@@ -1,6 +1,15 @@
-# 定时更新与私有分发
+# 生产调度与消费部署
 
-本目录提供 systemd 模板。将 `@RUN_USER@` 替换为实际运行身份后安装；该身份需读写工作与发布目录，
+GitHub 托管生产的 workflow 位于 [.github/workflows/data-pipeline.yml](../.github/workflows/data-pipeline.yml)，每两小时检查来源。
+启用与检查点迁移见[托管调度指南](../docs/guides/hosted-pipeline.md)，实际生产切换状态见 [STATUS](../STATUS.md)。
+
+- `scdp-consumer.service`、`scdp-consumer.timer`：每两小时拉取已发布标准包并调用消费适配器。
+- `consumer.example.json`：消费路径、发布源、容量门槛及固定维护命令。
+- `retention.py`：管理员拥有的固定回收入口，保留活动与立即前代。
+
+## 单机更新与受控分发模板
+
+单机模板可用于独立部署。将 `@RUN_USER@` 替换为实际运行身份后安装；该身份需读写工作与发布目录，
 消费激活权限按部署者的维护命令配置。真实配置、服务目标和凭证引用保存在 Git 忽略目录。
 
 - `scdp-cycle.service`、`scdp-cycle.timer`：每 10 分钟执行一次有锁、有预算的更新循环。

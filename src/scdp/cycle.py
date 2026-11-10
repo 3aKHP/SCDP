@@ -1,4 +1,4 @@
-"""One bounded update cycle; scheduling is supplied by a systemd timer."""
+"""One bounded update cycle, independent of its scheduler."""
 import json
 import subprocess
 import uuid
@@ -28,7 +28,7 @@ def baseline_state(config, root):
     return {"rollingCursor": 0}
 
 
-def cycle(config, *, transport=None):
+def cycle(config, *, transport=None, publisher=None):
     root = Path(config["work"])
     report = {"runId": uuid.uuid4().hex, "startedAt": now(), "command": "cycle",
               "configurationSha256": sha(canonical(config)), "scope": "official-current-plus-archived-history",
@@ -99,6 +99,8 @@ def cycle(config, *, transport=None):
             archive = root/"packages"/(snapshot_id+".tar.gz")
             packed = pack(output,archive)
             publication = publish(archive,config["destination"])
+            if publisher is not None:
+                publisher(archive, output, publication)
             report.update(snapshotId=snapshot_id,publication=publication,packageBytes=packed["compressedBytes"],state="published")
             # The command is an operator-configured argv, never shell-interpolated.
             # It stages, audits and activates a consumer; failures retain the prior active pair.

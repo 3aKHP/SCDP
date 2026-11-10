@@ -20,4 +20,15 @@
 
 消费者命令需由部署者提供；命令非零退出时不推进 cycle 活动状态，已经发布的文件仍可存在。消费者自身负责失败恢复，下一轮重试同一不可变候选。运行报告保存于工作目录 `runs/`。
 
-模板每十分钟调度一次；这是检查频率，不是上游更新到消费完成的时效承诺。安装步骤见[部署模板](../../deploy/README.md)，恢复与预算处理见[运维指南](../guides/operations.md)。
+单机 cycle 模板每十分钟调度一次。托管 producer 和独立消费者默认每两小时检查，实际生产启用状态见 [STATUS](../../STATUS.md)。
+检查频率不是端到端时效承诺。安装步骤见[部署模板](../../deploy/README.md)，恢复与预算处理见[运维指南](../guides/operations.md)。
+
+## 独立消费者
+
+`python -m scdp.consumer --config CONFIG` 使用[消费模板](../../deploy/consumer.example.json)。
+`repository` 指向公开数据 Release；`work` 保存活动身份、单轮回执和临时下载；`sources`、`index`、`candidates`、`recovery` 指定消费路径。
+`consumerCommand` 沿用上述 argv 占位符，须负责完整验收和失败回退。`retentionCommand` 为固定受权维护命令；未配置时当前进程须能直接持有 `deploymentLock` 并管理候选。
+
+`maxArchiveBytes` 默认 536870912、`maxUnpackedBytes` 默认 3221225472、`maxIndexBytes` 默认 2147483648、`reserveBytes` 默认 4294967296。
+`consumerTimeout` 默认 7200 秒。容量公式及清理规则见[托管调度](../guides/hosted-pipeline.md#磁盘规划与保留)。
+可选 `distribution` 指定已有受控分发目录；激活后更新分发指针，并校验、保留当前与前代归档。

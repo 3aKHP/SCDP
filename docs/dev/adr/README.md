@@ -13,6 +13,10 @@
 
 - [0003 — 公开分发与权利通知处理](0003-public-distribution-and-notice.md)（Accepted）
 
+- [0004 — 阅读段落与公开 collection](0004-reading-segments-and-public-collection.md)（Accepted）
+
+- [0005 — 托管生产调度与有界消费存储](0005-hosted-producer-and-bounded-consumer.md)（Accepted）
+
 ## 状态
 
 | status | 含义 |

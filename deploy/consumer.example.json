@@ -1,0 +1,17 @@
+{
+  "repository": "3aKHP/SCDP",
+  "work": "/data/scdp/pull",
+  "sources": "/data/kb/sources",
+  "index": "/data/kb/index/kb.sqlite3",
+  "candidates": "/data/scdp/consumers",
+  "recovery": "/data/scdp/recovery",
+  "distribution": "/data/scdp/releases",
+  "deploymentLock": "/var/lib/deployment/lock",
+  "reserveBytes": 4294967296,
+  "maxArchiveBytes": 536870912,
+  "maxUnpackedBytes": 3221225472,
+  "maxIndexBytes": 2147483648,
+  "consumerTimeout": 7200,
+  "consumerCommand": ["/opt/scdp/venv/bin/python", "/etc/scdp/consume.py", "{bundle}", "{archive}", "{snapshotId}"],
+  "retentionCommand": ["sudo", "-n", "/opt/scdp/venv/bin/python", "/etc/scdp/retention.py"]
+}
