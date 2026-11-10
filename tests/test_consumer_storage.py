@@ -42,6 +42,10 @@ def test_collection_keeps_active_and_previous_and_rollback_works(tmp_path):
     assert all(not (Path(p)/'candidate').exists() for p in plan['keep'])
     assert rollback(config['recovery'])['state'] == 'rolled-back'
     assert (Path(config['sources'])/'fiction.md').read_text() == 'Fiction generation 1'
+    assert retention_plan(config)['activeSnapshotId'] == '1'*64
+    with pytest.raises(ValueError, match='previous_generation_retired'):
+        rollback(config['recovery'])
+    assert (Path(config['sources'])/'fiction.md').read_text() == 'Fiction generation 1'
 
 
 def test_unknown_recovery_and_changed_pointers_block_all_cleanup(tmp_path):

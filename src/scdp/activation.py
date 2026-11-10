@@ -119,6 +119,8 @@ def rollback(recovery, *, service=None, control=service_control, deployment_lock
         record = json.loads((recovery/"active.json").read_bytes())
         if record["state"] != "active":
             raise ValueError("no_active_switch_to_rollback")
+        if not record.get("previousRetained", True):
+            raise ValueError("previous_generation_retired")
         sources, index, backup = Path(record["sources"]), Path(record["index"]), Path(record["backup"])
         candidate = Path(record["candidate"])
         if not sources.is_symlink() or not index.is_symlink() or sources.resolve() != candidate/"sources" or index.resolve() != candidate/"index.sqlite3":

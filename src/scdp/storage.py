@@ -74,15 +74,15 @@ def retention_plan(config):
     if Path(active["backup"]).resolve() != backup:
         raise ValueError("retention_backup_path_changed")
     for name, flag in (("sources", "hadPreviousSources"), ("index.sqlite3", "hadPreviousIndex")):
-        if active[flag]:
+        if active[flag] and active.get("previousRetained", True):
             if not (backup/name).exists():
                 raise ValueError("retention_previous_generation_missing")
             protected.append((backup/name).resolve())
     if sha(canonical(source_manifest(config["sources"]))) != active["sourceFingerprint"] or sha(Path(config["index"]).read_bytes()) != active["indexSha256"]:
         raise ValueError("retention_active_content_changed")
-    if active["hadPreviousSources"] and sha(canonical(source_manifest(backup/"sources"))) != active["baselineFingerprint"]:
+    if active["hadPreviousSources"] and active.get("previousRetained", True) and sha(canonical(source_manifest(backup/"sources"))) != active["baselineFingerprint"]:
         raise ValueError("retention_previous_sources_changed")
-    if active["hadPreviousIndex"] and sha((backup/"index.sqlite3").read_bytes()) != active["previousIndexSha256"]:
+    if active["hadPreviousIndex"] and active.get("previousRetained", True) and sha((backup/"index.sqlite3").read_bytes()) != active["previousIndexSha256"]:
         raise ValueError("retention_previous_index_changed")
     complete = {"active", "rolled-back", "failed-restored", "recovered-previous"}
     for journal in recovery.glob("*/receipt.json"):
@@ -113,6 +113,21 @@ def collect_candidates(config):
     # Caller holds the consumer lock and shared deployment lock. Active pointer
     # and recovery checks are repeated immediately before deleting owned paths.
     plan = retention_plan(config)
+    # A retained predecessor may itself refer to a generation being collected.
+    # Record this explicitly so one rollback still permits future pulls while
+    # a second rollback fails before touching the service or active pointers.
+    recovery = Path(config["recovery"])
+    active_id = json.loads((recovery/"active.json").read_bytes())["activationId"]
+    removed = [Path(path) for path in plan["remove"]]
+    from .core import write_json
+    for journal in recovery.glob("*/receipt.json"):
+        record = json.loads(journal.read_bytes())
+        if record["activationId"] == active_id:
+            continue
+        previous = [(journal.parent/name).resolve() for name in ("sources", "index.sqlite3")]
+        if any(p == root or p.is_relative_to(root) for p in previous for root in removed):
+            record["previousRetained"] = False
+            write_json(journal, record)
     for path in plan["remove"]+plan["scratch"]:
         shutil.rmtree(path)
     return plan
