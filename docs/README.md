@@ -1,13 +1,20 @@
-# 文档地图
+# 文档
 
-| 文档簇 | 用途 | 入口 |
-|---|---|---|
-| research | 已观察事实、来源身份、指标口径和实验边界 | [研究入口](research/README.md) |
-| design | 架构与契约语义约束，覆盖文本和未来多媒体 | [设计入口](design/README.md) |
-| handoff | 接手顺序、一期全流程任务、MCP-KB 验收、上线恢复和未决事项 | [交接入口](handoff/README.md) |
-| dev | 文档维护、术语使用和架构决策 | [开发协作规范](dev/README.md) |
-| glossary | 跨文档概念与详细规则入口 | [术语表](glossary.md) |
+## 使用指南
 
-README.md 与 STATUS.md 描述仓库现状。研究报告描述固定日期的观察。设计文档中标注的建议在实现时通过代码、schema 和验证结果固化。
+| 任务 | 入口 |
+|---|---|
+| 下载数据、选择包、阅读剧情 | [使用数据](guides/use-data.md) |
+| 自行获取、恢复下载和构建 | [采集与构建](guides/collect.md) |
+| 编写读取程序或接入应用 | [下游集成](guides/integrations.md) |
+| 定时更新、消费切换与恢复 | [运维](guides/operations.md) |
 
-正式机器字段入口：[契约 v1](../schemas/README.md)；操作入口：[运行指南](dev/running.md)。
+## 参考与维护
+
+- [CLI、配置与包格式](reference/README.md)
+- [架构与设计](design/README.md) · [术语表](glossary.md)
+- [贡献指南](../CONTRIBUTING.md) · [开发规范与 ADR](dev/README.md)
+- [当前状态及后续工作](../STATUS.md)
+- [研究与发布报告](research/README.md) · [历史归档](history/README.md)
+
+使用指南描述当前操作，参考文档定义接口，研究报告和历史材料保留对应日期的事实。

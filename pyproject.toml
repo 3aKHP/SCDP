@@ -5,10 +5,17 @@ build-backend = "hatchling.build"
 [project]
 name = "scdp"
 version = "0.1.0"
+readme = "README.md"
+license-files = ["LICENSE", "THIRD_PARTY.md", "NOTICE.md"]
 description = "Versioned Shiny Colors text and asset inventory pipeline"
 requires-python = ">=3.12"
 license = "AGPL-3.0-or-later"
 dependencies = ["httpx==0.28.1", "jsonschema==4.26.0"]
+
+[project.urls]
+Homepage = "https://github.com/3aKHP/SCDP"
+Documentation = "https://github.com/3aKHP/SCDP/blob/main/docs/README.md"
+Issues = "https://github.com/3aKHP/SCDP/issues"
 
 [project.scripts]
 scdp = "scdp.cli:main"

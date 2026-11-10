@@ -16,4 +16,4 @@
 远程访问通过部署者现有 SSH 隧道或已鉴权的反向代理；该模板不会开放公网监听。
 公开入口无需携带凭证参数；使用 Authorization 请求头。
 
-运行与恢复的详细说明见[运维指南](../docs/dev/operations.md)。
+运行与恢复的详细说明见[运维指南](../docs/guides/operations.md)。

@@ -1,8 +1,8 @@
 # 多媒体资产与交付
 
-状态：首期必须保留的通用能力与后续实现路线。
+状态：当前仅提供全类型目录、文本媒体引用和合成依赖验证。以下内容下载、转码和交付方案属于后续设计，尚未实现。
 
-## 确定需求
+## 当前范围与后续需求
 
 idolum 未来将消费非文本多媒体。第一阶段的资源模型、版本包和依赖设计应支持该消费方向。初版扫描全部官方索引，媒体默认仅记录目录与引用；首期下载选择器集中于剧情原文。
 
@@ -35,7 +35,7 @@ Spine 通常包含 skeleton JSON、atlas 与一张或多张纹理。组内依赖
 
 保持原始字节。兼容性 atlas 修补、纹理转码、重命名和缩略图渲染生成独立派生对象，记录输入、工具和处理规则。组的 ready 状态要求所有必需依赖可用；可选缩略图具有独立状态。
 
-## idolum 当前消费布局
+## idolum 参考消费布局（2026-11-10 调查）
 
 当前实现读取 source/spine_manifest.json 与 source/assets/spine/idols/<category>/<enzaId>/。常用 category 为 stand、stand_costume；生成 outfits/<idol_id>.json 与 thumbnails/<category>/<enzaId>.png，并将相关文件上传到部署者对象存储。
 

@@ -6,7 +6,7 @@
 
 ## 开始工作
 
-先读 README.md、.gitignore、STATUS.md 和 docs/handoff/01-agent-start.md。编写或修改文档前阅读 [文档规范](docs/dev/documenting.md)，涉及跨文档概念或重要决定时查阅 [术语表](docs/glossary.md) 与 [ADR](docs/dev/adr/README.md)。进入子目录工作前阅读该目录 README.md。研究快照与建议设计标明状态，验证后更新实现进度。本机存在 local_dev/README.md 时，按其说明定位研究原件与辅助仓库。
+先读 README.md、.gitignore、STATUS.md 和 docs/handoff/01-agent-start.md。编写或修改文档前阅读 [文档规范](docs/dev/documenting.md)，涉及跨文档概念或重要决定时查阅 [术语表](docs/glossary.md) 与 [ADR](docs/dev/adr/README.md)。进入子目录工作前阅读该目录 README.md。研究快照与历史材料标明日期和状态，当前操作以 docs/guides/ 和 docs/reference/ 为入口，验证后更新实现进度。本机存在 local_dev/README.md 时，按其说明定位研究原件与辅助仓库。
 
 用户已确定首期覆盖剧情文本和关联元数据，idolum 的后续多媒体消费属于确定需求。首期通用资产契约须容纳图片、Spine、语音、BGM、视频和派生产物。
 

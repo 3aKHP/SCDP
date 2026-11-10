@@ -15,7 +15,7 @@
 - 同主版本只添加兼容能力；改变必需字段、身份或字段语义时升级主版本。消费者拒绝不支持的主版本。
 - 缺译、未知标题与归属允许发布但须报告；正文遗漏、获取失败、错误摘要和必需依赖缺失阻止激活。
 
-合成实例见 [黄金样例](../tests/fixtures/golden.json)。包布局及正式发布入口将在 E2–E4 完成后固化。
+合成实例见 [黄金样例](../tests/fixtures/golden.json)。包布局与发布入口见[包格式](../docs/reference/package.md)。
 
 标准包按记录类型保存 assets.jsonl、versions.jsonl、stories.jsonl、translations.jsonl、entities.jsonl、relations.jsonl。
 每行按本 schema 的同名 `$defs` 校验；snapshot.json 使用 Snapshot 定义并列出其他包成员摘要。
