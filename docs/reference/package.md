@@ -18,7 +18,7 @@
 | `collection/import-manifest.json` | `documents` 数组，包含 `scriptId`、相对 collection 的 `path`、长度和摘要 |
 | `collection/references/`、`collection/collection.yaml` | 资源引用及消费配置 |
 
-通过导入清单定位阅读文件，不根据标题猜路径。阅读层统一 LF，精确原件保留原格式。未知控制、歧义和缺译保持可见，全文包含互斥路线。
+通过导入清单定位阅读文件，不根据标题猜路径。数据修订 2.1 起，普通对白以加粗帧标记连续展示，控制证据帧及其后续帧分段；选择、跳转和未知控制不会因取消逐帧标题而消失。阅读层统一 LF，精确原件保留原格式。未知控制、歧义和缺译保持可见，全文包含互斥路线。
 
 ## MCP-KB 导入包
 
@@ -29,3 +29,5 @@
 当前发布为完整快照，`baseline` 为 null，不支持增量包。`snapshotId` 标识不可变构建，`releaseSequence` 与 `publicationRevision` 决定发布顺序。同身份内容不覆盖。
 
 下载先核对 Release 摘要，完整标准包使用 `scdp validate` 校验。缺译与部分未知元数据允许存在，正文遗漏、摘要错误或必需依赖缺失不能视作可用发布。来源权利见 [NOTICE](../../NOTICE.md)。
+
+新构建的 collection 可见性为 public，已认证普通 KB 用户可读；服务本身仍需鉴权。已有包不改写，具体决定见 [ADR-0004](../dev/adr/0004-reading-segments-and-public-collection.md)。

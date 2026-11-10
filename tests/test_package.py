@@ -31,6 +31,8 @@ def test_full_offline_cycle(tmp_path):
     assert build(root,output)==built
     manifest=json.loads((output/"snapshot.json").read_bytes())
     assert manifest["scope"]["stories"]==1
+    assert manifest["scope"]["visibility"] == "public"
+    assert "visibility: public\n" in (output/"collection/collection.yaml").read_text()
     archive=tmp_path/"bundle.tar.gz"
     packed=pack(output,archive)
     assert packed==pack(output,archive)
@@ -127,3 +129,36 @@ publish(sys.argv[1],sys.argv[2])
     assert current['snapshotId']!=previous['snapshotId']
     assert json.loads((destination/'previous.json').read_bytes())==previous
     assert publish(new,destination)==current
+
+
+def test_reading_segments_keep_dialogue_context_and_control_boundaries():
+    from scdp.story import project
+    from scdp.build import render
+    from scdp.validation import check_occurrences
+    frames = [
+        {"speaker": "架空甲", "text": "青い傘を持った。"},
+        {"speaker": "架空乙", "text": "白い橋で待った。"},
+        {"select": "左へ", "nextLabel": "left"},
+        {"select": "右へ", "nextLabel": "right"},
+        {"label": "left", "text": "左側の出来事。"},
+        {"text": "左側の続き。", "nextLabel": "end"},
+        {"label": "right", "text": "右側の出来事。"},
+        {"command": "conditional_jump", "commandKey": "flag", "nextLabel": "end"},
+        {"text": "条件が偽の出来事。"},
+        {"futureControl": {"text": "未知の証拠。"}},
+        {"label": "end", "text": "終点。"},
+        {"label": "end", "text": "同名ラベルも保持。"},
+    ]
+    story = project('demo/branches', frames, '0'*64, '0'*64)
+    translations = [{"pointer": "/0/text", "status": "aligned", "kind": "human", "text": "拿着蓝伞。"}]
+    document = render(story, translations)
+    sections = document.split('\n## ')
+    assert any('青い傘' in s and '白い橋' in s and '拿着蓝伞' in s for s in sections)
+    assert not any('左側の出来事' in s and '右側の出来事' in s for s in sections)
+    assert not any('条件が偽' in s and '終点。' in s for s in sections)
+    assert not any('未知の証拠' in s and '条件が偽' in s for s in sections)
+    assert '译文状态：missing' in document
+    assert '条件为真' in document and '为假' in document
+    assert check_occurrences(story, document)[0] == len(story['occurrences'])
+    assert all('控制证据：' + canonical(c).decode() in document for c in story['controls'])
+    assert len([s for s in sections if '同名ラベルも保持' in s]) == 1

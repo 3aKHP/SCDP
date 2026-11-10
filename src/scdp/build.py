@@ -66,11 +66,19 @@ def render(story, translations):
     for occurrence in story["occurrences"]:
         index=int(occurrence["pointer"].split("/")[1])
         by_frame.setdefault(index,[]).append(occurrence)
+    # Controls are hard reading boundaries; ordinary dialogue shares context.
+    previous_control = False
+    started = False
     for i,frame in enumerate(story["frames"]):
         controls=[c for c in story["controls"] if c["pointer"].startswith(f"/{i}/")]
         if not by_frame.get(i) and not controls:
             continue
-        lines.extend([f"## 帧 {i}", ""])
+        if not started or controls or previous_control:
+            lines.extend([f"## 原件段：帧 {i}", "",
+                          "按原件顺序展示；选项、跳转及条件决定实际路线，不代表连续发生的经历。", ""])
+            started = True
+        lines.extend([f"**帧 {i}**", ""])
+        previous_control = bool(controls)
         if frame.get("speaker"):
             lines.extend(["说话人："+str(frame["speaker"]),""])
         for occurrence in by_frame.get(i,[]):
@@ -130,7 +138,7 @@ def build(root, output, *, translations=None, translation_identity="absent", met
         (collection/"references").mkdir()
         write_json(stage/"inputs.json",inputs)
         atomic_write(stage/"schema.json",(Path(__file__).parent/"contract.schema.json").read_bytes())
-        atomic_write(collection/"collection.yaml",(f"id: {COLLECTION}\ntitle: 闪耀色彩剧情（日中）\nlanguage: ja\nvisibility: private\nstatus: active\ndefault_tags: [shinycolors, story, bilingual]\nsource:\n  kind: scdp\n  snapshot: {snapshot_id}\nindex:\n  include:\n    - docs/**/*.md\n    - references/**/*.md\n  exclude:\n    - attachments/**\n").encode())
+        atomic_write(collection/"collection.yaml",(f"id: {COLLECTION}\ntitle: 闪耀色彩剧情（日中）\nlanguage: ja\nvisibility: public\nstatus: active\ndefault_tags: [shinycolors, story, bilingual]\nsource:\n  kind: scdp\n  snapshot: {snapshot_id}\nindex:\n  include:\n    - docs/**/*.md\n    - references/**/*.md\n  exclude:\n    - attachments/**\n").encode())
         coverage=[];translated=Counter();control_keys=Counter();frame_keys=Counter(); fetched={}
         metadata_coverage=Counter();media_coverage=Counter();body_occurrences=readable_stories=unknown_strings=0
         with (stage/"stories.jsonl").open("wb") as story_out,(stage/"translations.jsonl").open("wb") as translation_out, (stage/"relations.jsonl").open("wb") as relation_out:
@@ -182,7 +190,7 @@ def build(root, output, *, translations=None, translation_identity="absent", met
         write_json(stage/"sources.json",{"official":{"observationId":observation["observationId"],"manifestSha256":observation["manifestSha256"],
             "inventorySha256":observation["inventorySha256"],"shards":observation["shards"]},
             "historicalObservationIds":sorted({record["observationId"] for record in chosen.values()}-{observation["observationId"]}),
-            "translation":{"identity":translation_identity,"archiveSha256":translation_sha,"license":"no license file in pinned source; private distribution"},
+            "translation":{"identity":translation_identity,"archiveSha256":translation_sha,"license":"third-party rights retained; see NOTICE.md; historical translation license coverage requires verification"},
             "metadata":catalog.inputs})
         write_json(collection/"import-manifest.json",{"snapshotId":snapshot_id,"documents":coverage})
         index="# 剧情目录\n\n"+"\n".join(f"- [{r['scriptId']}]({r['path']})" for r in coverage)+"\n"
@@ -215,7 +223,7 @@ def build(root, output, *, translations=None, translation_identity="absent", met
         manifest={"schemaVersion":"1.0.0","snapshotId":snapshot_id,"releaseSequence":sequence,"publicationRevision":revision,
                   "observedAt":observation["endedAt"],"builtAt":identity["builtAt"],"source":{"observationId":observation["observationId"],"version":observation["sourceVersion"],"inventorySha256":observation["inventorySha256"],"inventoryCount":len(observation["resources"]),"consistency":"observation-window"},
                   "inputs":inputs,"capabilities":["story.original-json","story.occurrences","story.translation","catalog.partial","asset.inventory"],
-                  "scope":{"selector":"json/**/*.json except json/support_skills/**","selected":observation["selected"],"stories":len(coverage),"historicalStories":len(chosen)-observation["selected"],"historicalCatalogOnly":[p for p in history if selected(p) and p not in chosen],"archiveInventoryCount":len(history),"media":"inventory-only","visibility":"private","historicalCompleteness":"unproven"},
+                  "scope":{"selector":"json/**/*.json except json/support_skills/**","selected":observation["selected"],"stories":len(coverage),"historicalStories":len(chosen)-observation["selected"],"historicalCatalogOnly":[p for p in history if selected(p) and p not in chosen],"archiveInventoryCount":len(history),"media":"inventory-only","visibility":"public","historicalCompleteness":"unproven"},
                   "baseline":None,"predecessor":None,"validation":{"unresolvedMetadata":True,"unknownControl":"preserved"},"files":entries}
         if len(coverage)!=len(chosen): raise ValueError("build_scope_mismatch")
         write_json(stage/"snapshot.json",manifest)
