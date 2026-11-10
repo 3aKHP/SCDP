@@ -10,7 +10,7 @@
 
 闪彩 collection 为 Public，已认证普通用户可访问；外部网关继续校验 Token，其他私有 collection 和受控下载服务保持原权限。代码和数据权利见 [NOTICE](NOTICE.md)，消费可见性与阅读格式见 [ADR-0004](docs/dev/adr/0004-reading-segments-and-public-collection.md)。
 
-生产调度正在迁移到 GitHub 托管 Runner，每两小时检查一次。旧采集 timer 已暂停，现有消费服务继续运行。Runner workflow、私有检查点、独立消费拉取与空间保留已实现，真实冻结检查点的 10,950 篇原件与解码、资产目录及累计账本离线恢复通过，尚未启用新生产调度。迁移步骤见[托管调度](docs/guides/hosted-pipeline.md)。
+GitHub 托管生产已启用，每两小时检查一次；[首轮实际运行](https://github.com/3aKHP/SCDP/actions/runs/42918269262)已发布 [data-s2-r2](https://github.com/3aKHP/SCDP/releases/tag/data-s2-r2)。旧采集 timer 已停用，现有阅读服务继续运行，独立消费者正在进行生产切换验收。真实冻结检查点的 10,950 篇原件与解码、资产目录及累计账本离线恢复通过。82 项合成测试、workflow 检查与代码包构建通过。迁移步骤见[托管调度](docs/guides/hosted-pipeline.md)。
 
 迁移验收还包括真实 Runner 发布、生产消费、完整前代恢复及清场前后磁盘测量，完成后记录实际结果。
 
