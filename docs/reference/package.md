@@ -26,6 +26,11 @@
 
 ## 版本和验证
 
+自动数据 Release 命名为 `data-s<releaseSequence>-r<publicationRevision>`，附件包括标准包、`SHA256SUMS`、`NOTICE.md` 和 `manifest.json`。
+`manifest.json` 使用 `format: scdp-release/v1`，记录 `snapshotId`、`releaseSequence`、`publicationRevision`、`filename`、`bytes` 和 `sha256`。
+`filename` 为 `scdp-phase-one.tar.gz`；长度与摘要指向压缩归档，序列和修订须与 tag 及包内 `snapshot.json` 一致。
+消费者只接受完成公开的正式数据版本，校验失败保留现有活动版。旧 v0.1.0 不包含该描述符，作为固定快照单独使用。
+
 当前发布为完整快照，`baseline` 为 null，不支持增量包。`snapshotId` 标识不可变构建，`releaseSequence` 与 `publicationRevision` 决定发布顺序。同身份内容不覆盖。
 
 下载先核对 Release 摘要，完整标准包使用 `scdp validate` 校验。缺译与部分未知元数据允许存在，正文遗漏、摘要错误或必需依赖缺失不能视作可用发布。来源权利见 [NOTICE](../../NOTICE.md)。

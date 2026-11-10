@@ -77,6 +77,7 @@ systemd `LimitFSIZE` 与 `maxIndexBytes` 同步，约束单文件；容量门禁
 
 自动回收只处理具有 `scdp-stage.json` 的直接候选，以及保留候选内已完成的准备副本与安装临时备份。
 当前/前代内容与摘要必须完整，未结束恢复日志阻止回收。原件历史位于 Runner 检查点中。
+更早代次退役后记录 `previousRetained=false`。回退到立即前代后仍可继续拉取更新，再次尝试回退至已退役数据会在改动服务前被拒绝。
 
 ## Runner 异常恢复
 

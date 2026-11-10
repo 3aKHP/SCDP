@@ -141,3 +141,48 @@ def test_distribution_collects_only_old_archives_after_validating_both_pointers(
     keep.write_bytes(b'fiction 1')
     assert collect_distribution(tmp_path) == len(b'fiction 0')
     assert keep.exists() and not (tmp_path/('0'*64+'.tar.gz')).exists()
+
+
+def test_pull_success_then_unchanged_keeps_two_generations_without_redownloading(tmp_path, monkeypatch):
+    import subprocess
+    import scdp.consumer as consumer
+    from scdp.cycle import cycle
+    from scdp.github_release import publish_data
+    from test_runner import seed, MemoryGitHub
+    config = generations(tmp_path/'consumer')
+    config.update(repository='synthetic/data', deploymentLock=str(tmp_path/'deploy.lock'),
+                  consumerCommand=['synthetic-consumer', '{bundle}', '{archive}', '{snapshotId}'])
+    Path(config['deploymentLock']).touch()
+    source, upstream, transport, _, first = seed(tmp_path/'producer')
+    write_json(Path(config['work'])/'active-release.json', first['publication'])
+    upstream['version'] = 2
+    second = cycle(source, transport=transport)
+    api = MemoryGitHub()
+    archive = Path(source['work'])/'packages'/(second['snapshotId']+'.tar.gz')
+    bundle = Path(source['work'])/'builds'/second['snapshotId']
+    publish_data(api, archive, bundle, second['publication'], commit='a'*40)
+    monkeypatch.setattr(consumer, 'capacity_plan', lambda *args: {'requiredBytes': 1})
+    monkeypatch.setattr(consumer, 'require_space', lambda *args: {})
+    def adapter(args, **kwargs):
+        candidate = Path(config['candidates'])/'new'
+        s, i = source_index(candidate, 'Synthetic activated release')
+        baseline = sha(canonical(source_manifest(config['sources'])))
+        write_json(candidate/'scdp-stage.json', {'snapshotId': args[-1], 'componentSha256': 'a'*64,
+                                                'baselineFingerprint': baseline})
+        write_json(candidate/'reconciliation.json', {'snapshotId': args[-1], 'fileDigestsMatch': True,
+            'indexedNonemptyLinesCovered': True, 'candidateTreeFingerprint': sha(canonical(source_manifest(s))),
+            'indexSha256': sha(i.read_bytes()), 'baselineFingerprint': baseline})
+        activate(candidate, config['sources'], config['index'], config['recovery'])
+        return subprocess.CompletedProcess(args, 0)
+    monkeypatch.setattr(consumer.subprocess, 'run', adapter)
+    assert consumer.pull(config, api)['state'] == 'activated'
+    assert not (Path(config['work'])/'incoming').exists()
+    assert len(retention_plan(config)['keep']) == 2
+    downloads = []
+    download = api.download
+    def tracked(asset, *args, **kwargs):
+        downloads.append(asset['name'])
+        return download(asset, *args, **kwargs)
+    api.download = tracked
+    assert consumer.pull(config, api)['state'] == 'unchanged'
+    assert downloads == ['manifest.json']

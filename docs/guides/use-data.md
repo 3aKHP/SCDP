@@ -4,7 +4,7 @@
 
 ## 下载与校验
 
-从 [v0.1.0 Release](https://github.com/3aKHP/SCDP/releases/tag/v0.1.0) 下载 `scdp-phase-one.tar.gz` 和 `SHA256SUMS` 到同一目录。以下命令在 Linux、具备 GNU coreutils 和 tar 的环境中执行；检查输出应为标准包 `OK`。清单也包含导入包，只下载标准包时选择对应的一行：
+从 [Releases](https://github.com/3aKHP/SCDP/releases) 选择数据版本，将 `scdp-phase-one.tar.gz` 和 `SHA256SUMS` 下载到同一目录。自动版本使用 `data-s<序列>-r<修订>`，按序列、修订依次比较大小；[v0.1.0](https://github.com/3aKHP/SCDP/releases/tag/v0.1.0) 为固定首版。以下命令在 Linux、具备 GNU coreutils 和 tar 的环境中执行；检查输出应为标准包 `OK`。固定首版清单另含导入包，选择标准包对应的一行：
 
 ```bash
 rg '  scdp-phase-one.tar.gz$' SHA256SUMS | sha256sum --check

@@ -11,9 +11,9 @@ SCDP 采集并归档《偶像大师 闪耀色彩》enza 页游的剧情，将日
 | 附件 | 适用用途 |
 |---|---|
 | `scdp-phase-one.tar.gz`（标准包） | 阅读剧情、处理结构化记录、开发集成；包含解码原件、译文来源和覆盖报告 |
-| `scdp-mcp-kb-collection.tar.gz`（导入包） | 已有兼容 MCP-KB 环境时，通过其原生工具安装 collection |
+| `scdp-mcp-kb-collection.tar.gz`（固定首版导入包） | v0.1.0 提供，已有兼容 MCP-KB 环境时通过原生工具安装 |
 
-首次使用建议选择标准包。v0.1.0 收录 10,936 篇剧情，具体快照、大小和覆盖统计见[发布报告](docs/research/2026-11-10-first-release.md)。
+首次使用建议选择标准包。自动更新使用 `data-s<序列>-r<修订>` Release，提供标准包及 `manifest.json`。固定首版 v0.1.0 收录 10,936 篇剧情，见[首批报告](docs/research/2026-11-10-first-release.md)；当前范围见所选 Release 和 [STATUS](STATUS.md)。
 
 ## 快速开始
 
