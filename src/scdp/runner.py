@@ -32,8 +32,8 @@ def write_state(api, release, state):
     fresh = api.request("GET", f'/releases/{release["id"]}')
     if not fresh["draft"] or fresh["tag_name"] != STATE_TAG or fresh["body"] != release["body"]:
         raise ValueError("runner_state_changed")
-    updated = api.request("PATCH", f'/releases/{release["id"]}', json={"body": canonical(state).decode()})
-    if not updated["draft"] or json.loads(updated["body"]) != state:
+    updated = api.request("PATCH", f'/releases/{release["id"]}', json={"tag_name": STATE_TAG, "draft": True, "body": canonical(state).decode()})
+    if not updated["draft"] or updated["tag_name"] != STATE_TAG or json.loads(updated["body"]) != state:
         raise ValueError("runner_state_readback")
     return updated
 
@@ -50,6 +50,8 @@ def initialize(api, checkpoint, commit):
         raise ValueError("runner_state_already_exists")
     with tempfile.TemporaryDirectory() as tmp:
         restore_checkpoint(checkpoint, Path(tmp)/"verify")
+    if release is None:
+        api.ensure_tag(STATE_TAG, commit)
     release = release or api.request("POST", "/releases", json={"tag_name": STATE_TAG, "target_commitish": commit,
                           "draft": True, "name": "SCDP private runner state — DO NOT PUBLISH",
                           "body": canonical({"format": STATE_FORMAT, "head": None, "lease": None}).decode()})

@@ -105,7 +105,7 @@ def retention_plan(config):
                     scratch.append(str(child))
         else:
             remove.append(str(path))
-    return {"keep": keep, "remove": remove, "scratch": scratch,
+    return {"activeSnapshotId": active["snapshotId"], "keep": keep, "remove": remove, "scratch": scratch,
             "reclaimBytes": sum(tree_bytes(p) for p in remove+scratch)}
 
 

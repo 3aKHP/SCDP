@@ -20,6 +20,12 @@ class MemoryGitHub:
         self.records, self.blobs = {}, {}
         self.counter = 0
         self.fail_upload = False
+        self.tags = {}
+
+    def ensure_tag(self, tag, commit):
+        if tag in self.tags and self.tags[tag] != commit:
+            raise ValueError('github_existing_tag_conflict')
+        self.tags[tag] = commit
 
     def releases(self):
         return iter(copy.deepcopy(list(self.records.values())))

@@ -36,8 +36,7 @@ def pull(config, api):
         if new < old or (new == old and descriptor["snapshotId"] != current["snapshotId"]):
             raise ValueError("consumer_release_order_conflict")
         if new == old:
-            registry = json.loads((Path(config["recovery"])/"active.json").read_bytes())
-            if registry["snapshotId"] != descriptor["snapshotId"]:
+            if collection["activeSnapshotId"] != descriptor["snapshotId"]:
                 raise ValueError("consumer_active_snapshot_changed")
             return {"state": "unchanged", "snapshotId": descriptor["snapshotId"], "reclaimedBytes": collection["reclaimBytes"]}
         limit = config.get("maxArchiveBytes", 512*1024**2)
@@ -70,8 +69,8 @@ def pull(config, api):
                                            timeout=config.get("consumerTimeout", 7200))
             if completed.returncode:
                 raise ValueError("consumer_activation_failed")
-            registry = json.loads((Path(config["recovery"])/"active.json").read_bytes())
-            if registry["state"] != "active" or registry["snapshotId"] != descriptor["snapshotId"]:
+            collected = collect(config)
+            if collected["activeSnapshotId"] != descriptor["snapshotId"]:
                 raise ValueError("consumer_activation_not_confirmed")
             if config.get("distribution"):
                 publish(archive, config["distribution"])
@@ -79,7 +78,6 @@ def pull(config, api):
                     collect_distribution(config["distribution"])
             write_json(root/"previous-release.json", current)
             write_json(state_path, descriptor)
-            collected = collect(config)
             return {"state": "activated", "snapshotId": descriptor["snapshotId"], "capacity": plan,
                     "reclaimedBytes": collection["reclaimBytes"]+collected["reclaimBytes"]}
         finally:

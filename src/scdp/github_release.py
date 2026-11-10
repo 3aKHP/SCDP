@@ -49,6 +49,15 @@ class GitHub:
             raise ValueError("github_duplicate_release")
         return matches[0] if matches else None
 
+    def ensure_tag(self, tag, commit):
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", tag) or not re.fullmatch(r"[a-f0-9]{40}", commit):
+            raise ValueError("github_invalid_tag_identity")
+        response = self.client.get(self.base+"/git/ref/tags/"+tag, headers=self.headers)
+        if response.status_code == 404:
+            self.request("POST", "/git/refs", json={"ref": "refs/tags/"+tag, "sha": commit})
+        elif response.status_code != 200 or response.json()["object"]["sha"] != commit:
+            raise ValueError("github_existing_tag_conflict")
+
     def assets(self, release_id):
         result = []
         for page in range(1, 101):
@@ -165,6 +174,7 @@ def publish_data(api, archive, bundle, publication, *, commit):
         raise ValueError("github_publication_order")
     release = api.find(tag)
     if release is None:
+        api.ensure_tag(tag, commit)
         release = api.request("POST", "/releases", json={"tag_name": tag, "target_commitish": commit,
                               "name": f"闪彩剧情数据 · {sequence}.{revision}", "draft": True,
                               "body": f"收录 {manifest['scope']['stories']:,} 篇剧情，保留原文、已有译文及分支。\n\n"
@@ -194,7 +204,7 @@ def publish_data(api, archive, bundle, publication, *, commit):
             else:
                 raise ValueError("github_publication_incomplete")
     if release["draft"]:
-        release = api.request("PATCH", f'/releases/{release["id"]}', json={"draft": False, "make_latest": "true"})
+        release = api.request("PATCH", f'/releases/{release["id"]}', json={"tag_name": tag, "draft": False, "make_latest": "true"})
     actual, _ = read_descriptor(api, release)
     if release["draft"] or actual != descriptor:
         raise ValueError("github_publication_readback")
