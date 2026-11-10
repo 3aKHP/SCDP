@@ -4,9 +4,9 @@
 
 ## 当前任务入口
 
-项目处于研究交接阶段，已完成内容见 [STATUS.md](STATUS.md)。从 [接手指南](docs/handoff/01-agent-start.md) 和 [实现计划](docs/handoff/02-implementation-plan.md) 选择当前交付阶段。
+一期已完成，当前运行与后续工作见 [STATUS.md](STATUS.md)。从 [接手指南](docs/handoff/01-agent-start.md) 和 [实现计划](docs/handoff/02-implementation-plan.md) 选择当前交付阶段。
 
-开始实现时先完成 P0 的正式契约与工程入口，再推进可离线重放的采集、解码和校验。实现语言、构建工具、CLI 和测试命令在相应阶段确定，并以实际验证结果更新开发文档。
+维护时使用现有正式契约、运行指南和验收门禁。公开分发与权利通知按 [NOTICE](NOTICE.md) 和 ADR-0003 处理；译者署名随包传递列入下一轮评估。
 
 一期执行从 [交付范围](docs/handoff/04-phase-one-delivery.md)进入，最终按 [MCP-KB 接入规程](docs/handoff/10-mcp-kb-delivery.md)验收完整 collection。公开面不得包含私有仓库与部署拓扑，具体规则由 AGENTS.md 维护，目标映射仅在本地工作区查找。
 

@@ -9,5 +9,5 @@ SCDP 代码采用 AGPL-3.0-or-later，完整文本见 [LICENSE](LICENSE)。
 于 2026-11-10 核对。修改包括路径校验、解码容量限制和异常分类。
 
 官方游戏内容及 SCTranslationData 译文具有独立来源身份，不受本仓库代码许可证授权。
-原件和真实文本包保存在忽略目录；一期采用私有数据分发和 private collection。
+原件、工作数据和构建包保存在忽略目录；经验证的文本包通过 GitHub Release 公开分发，消费者 collection 独立控制访问。用途、历史译文许可证据及权利通知入口见 [NOTICE](NOTICE.md)。
 测试夹具为自行编写的虚构内容。SCTranslationData 的来源许可与固定快照文件范围在数据任务中单独核对。

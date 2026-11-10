@@ -2,7 +2,11 @@
 
 《偶像大师 闪耀色彩》enza 页游的共享资产采集、历史归档与版本分发项目。
 
-一期已完成，首批私有文本资产 v0.1.0 已发布。完整剧情 collection 已在 MCP-KB 激活，并通过全文读取、检索、恢复与实际定时观察。交付身份和范围见[发布报告](docs/research/2026-11-10-first-release.md)，当前状态见 [STATUS](STATUS.md)，操作入口见[运行指南](docs/dev/running.md)。
+一期已完成，首批文本资产 v0.1.0 已发布。完整剧情 collection 已在 MCP-KB 激活，并通过全文读取、检索、恢复与实际定时观察。交付身份和范围见[发布报告](docs/research/2026-11-10-first-release.md)，当前状态见 [STATUS](STATUS.md)，操作入口见[运行指南](docs/dev/running.md)。
+
+## 分发与权利通知
+
+源码与文本 Release 公开，面向非商业同人资料整理、个人查阅和研究交流。代码采用 AGPL-3.0-or-later，原作与译文保留各自权利；完整说明及通知下架入口见 [NOTICE](NOTICE.md)。逐篇译者署名随包传递列入后续评估。
 
 ## 产品范围
 

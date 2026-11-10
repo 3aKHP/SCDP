@@ -11,6 +11,8 @@
 - [0001 — Python 运行时与文本交换契约](0001-runtime-and-contract.md)（Accepted）
 - [0002 — 历史正文、内容修订与消费切换](0002-history-and-activation.md)（Accepted）
 
+- [0003 — 公开分发与权利通知处理](0003-public-distribution-and-notice.md)（Accepted）
+
 ## 状态
 
 | status | 含义 |

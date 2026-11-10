@@ -27,6 +27,8 @@ superseded_by: []
 不宣称上游参数可固定历史内容。源码采用 AGPL-3.0-or-later，复用记录见 [来源许可](../../../THIRD_PARTY.md)。
 游戏数据、译文和部署配置独立管理，首期数据分发与 MCP-KB collection 默认为 private。
 
+公开分发的后续决定见 [ADR-0003](0003-public-distribution-and-notice.md)，运行时与契约约束继续有效。
+
 ## 后果与验证
 
 JSONL 可逐条处理全类型目录；完整包简化恢复并增加增量发布时的传输量。

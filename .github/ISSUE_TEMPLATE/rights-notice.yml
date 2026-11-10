@@ -1,0 +1,31 @@
+name: 权利通知 / Rights notice
+description: 原作者、译者或权利人申请下架、删除或更正署名。
+title: "[权利通知] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        维护者收到明确指向受控内容的通知后，将及时先行暂停相关公开分发，再核对范围。
+        请勿在公开 Issue 上传身份证件、住址或其他敏感个人资料；需要非公开核验时请在说明中提出。
+        Rights holders and translators may request removal or attribution corrections. Please do not post sensitive identity documents publicly.
+  - type: input
+    id: rights_holder
+    attributes:
+      label: 权利主体与关系 / Rights holder and your role
+      description: 填写公开名称及您与作品或译文的关系即可。
+    validations:
+      required: true
+  - type: textarea
+    id: affected_content
+    attributes:
+      label: 受影响内容 / Affected content
+      description: 提供 Release、附件、文件、剧情标识或可定位链接。
+    validations:
+      required: true
+  - type: textarea
+    id: requested_action
+    attributes:
+      label: 请求与说明 / Requested action
+      description: 例如下架、删除、停止再分发或更正署名；可说明是否需要私下沟通。
+    validations:
+      required: true
