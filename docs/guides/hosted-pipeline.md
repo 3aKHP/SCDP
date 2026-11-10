@@ -9,6 +9,7 @@
 生产 job 在 GitHub 托管 `ubuntu-latest` 上运行，使用 `contents: write` 的 `github.token`。
 无需服务器 SSH 密钥或 MCP 凭证，初次启用前必须初始化检查点。
 生产日志输出检查点恢复、来源复核、构建校验、归档校验、发布和最终检查点保存的阶段及耗时，不输出私有路径或源正文。
+单次 producer 上限为五小时，以容纳限速下的大批量正文更新；并发组保证长作业串行执行，检查周期不要求中断上一轮。
 
 [消费 timer](../../deploy/scdp-consumer.timer) 每两小时第 47 分钟检查完成发布的版本。
 若 Runner 尚未完成，本轮维持当前版，下轮再检查。GitHub schedule 可能延迟，错峰时间不是完成保证。

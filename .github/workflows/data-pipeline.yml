@@ -12,7 +12,8 @@ jobs:
   produce:
     if: github.ref == 'refs/heads/main' && vars.SCDP_PRODUCER_ENABLED == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    # A full text refresh at the bounded source rate can exceed two hours.
+    timeout-minutes: 300
     permissions:
       contents: write
     steps:
