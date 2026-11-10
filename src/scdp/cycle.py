@@ -28,7 +28,10 @@ def baseline_state(config, root):
     return {"rollingCursor": 0}
 
 
-def cycle(config, *, transport=None, publisher=None):
+def cycle(config, *, transport=None, publisher=None, progress=None):
+    def emit(stage):
+        if progress:
+            progress(stage)
     root = Path(config["work"])
     report = {"runId": uuid.uuid4().hex, "startedAt": now(), "command": "cycle",
               "configurationSha256": sha(canonical(config)), "scope": "official-current-plus-archived-history",
@@ -44,6 +47,7 @@ def cycle(config, *, transport=None, publisher=None):
             shard_count = min(config.get("shardChecks",1),len(shard_names))
             audit_shards = [shard_names[(shard_cursor+i)%len(shard_names)] for i in range(shard_count)]
             observation = discover(downloader, config.get("sourceBase",ASSETS_URL),audit_shards=audit_shards)
+            emit("source_checked")
             state["shardCursor"] = (shard_cursor+shard_count)%max(1,len(shard_names))
             source_changed = previous is None or previous["observationId"] != observation["observationId"]
             if source_changed:
@@ -76,6 +80,7 @@ def cycle(config, *, transport=None, publisher=None):
             catalog = Catalog({p:s["sourceVersion"] for p,s in history.items()})
             catalog.load(config.get("metadata"))
             inputs = input_identity(observation,history,chosen,catalog,translation,translation_id)
+            emit("inputs_verified")
             report.update(observationId=observation["observationId"], inputsSha256=sha(canonical(inputs)),
                           drift=drift, translation=translation_receipt, codeSha256=inputs["codeSha256"])
             if inputs == state.get("inputs"):
@@ -84,6 +89,7 @@ def cycle(config, *, transport=None, publisher=None):
                 return report
             # Before any new publication, independently revalidate every shard.
             after = discover(downloader,config.get("sourceBase",ASSETS_URL),audit=True)
+            emit("all_shards_revalidated")
             if after["observationId"] != observation["observationId"]:
                 raise ValueError("cycle_source_changed_during_build_window")
             old_inputs = state.get("inputs",{})
@@ -94,11 +100,14 @@ def cycle(config, *, transport=None, publisher=None):
             snapshot_id = sha(canonical({**inputs,"releaseSequence":sequence,"publicationRevision":revision}))
             output = root/"builds"/snapshot_id
             result = build(root,output,translations=translation,translation_identity=translation_id,metadata=config.get("metadata"),sequence=sequence,revision=revision)
+            emit("bundle_built_and_validated")
             if result["snapshotId"] != snapshot_id:
                 raise ValueError("cycle_build_inputs_changed")
             archive = root/"packages"/(snapshot_id+".tar.gz")
             packed = pack(output,archive)
+            emit("archive_packed")
             publication = publish(archive,config["destination"])
+            emit("archive_readback_verified")
             if publisher is not None:
                 publisher(archive, output, publication)
             report.update(snapshotId=snapshot_id,publication=publication,packageBytes=packed["compressedBytes"],state="published")

@@ -5,6 +5,7 @@ import os
 import re
 import sys
 import sqlite3
+import time
 import tempfile
 import uuid
 from pathlib import Path
@@ -89,6 +90,9 @@ def recover(api, directory, expected_lease):
 
 
 def run(api, directory, commit, *, cycle_fn=cycle):
+    started = time.monotonic()
+    def progress(stage):
+        print(json.dumps({"stage": stage, "elapsedSeconds": round(time.monotonic()-started, 1)}), flush=True)
     release, state = state_record(api)
     if state.get("lease"):
         raise ValueError("runner_unfinished_run_requires_recovery")
@@ -96,6 +100,7 @@ def run(api, directory, commit, *, cycle_fn=cycle):
     directory.mkdir(parents=True, exist_ok=True)
     api.download(state["head"], directory/"input.tar.gz", expected_sha=state["head"]["sha256"])
     config = restore_checkpoint(directory/"input.tar.gz", directory/"restored")
+    progress("checkpoint_restored")
     config["codeCommit"] = commit
     state["lease"] = {"id": uuid.uuid4().hex, "startedAt": now(), "commit": commit}
     release = write_state(api, release, state)
@@ -106,17 +111,20 @@ def run(api, directory, commit, *, cycle_fn=cycle):
         pending = upload_checkpoint(api, release, config, directory/"pending.tar.gz", locked=True)
         state["lease"]["pending"] = pending
         release = write_state(api, release, state)
+        progress("originals_checkpoint_saved")
         publish_data(api, archive, bundle, publication, commit=commit)
+        progress("github_release_published")
 
     result = None
     try:
-        result = cycle_fn(config, publisher=publisher)
+        result = cycle_fn(config, publisher=publisher, progress=progress)
     finally:
         # Normal failures preserve the cumulative ledger too. If this fails, the
         # lease remains occupied; later runs must never silently use the old ledger.
         head = upload_checkpoint(api, release, config, directory/"output.tar.gz")
         state.update(previous=state["head"], head=head, lease=None, updatedAt=now())
         release = write_state(api, release, state)
+        progress("final_checkpoint_saved")
         # Only managed checkpoint assets are collected; current + predecessor stay.
         keep = {state["head"]["id"], state["previous"]["id"]}
         for asset in api.assets(release["id"]):
