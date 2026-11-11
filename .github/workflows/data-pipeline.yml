@@ -1,8 +1,7 @@
 name: Data pipeline
 on:
   schedule:
-    # Temporary production acceptance; restore the two-hour schedule after observation.
-    - cron: '*/5 * * * *'
+    - cron: '17 */2 * * *'
   workflow_dispatch:
 permissions:
   contents: read
